@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+/* Design tokens used across the app (Tailwind v4 reads them from @theme). */
+@theme {
+  /* System font stacks only: no web fonts are downloaded. */
+  --font-sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Code", Consolas, "Courier New", monospace;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-slate-950 text-slate-100 antialiased;
+}

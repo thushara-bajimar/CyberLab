@@ -1,0 +1,27 @@
+# Dependencies and build output
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Local environment files (may contain machine-specific settings)
+.env
+.env.*
+!.env.example
+
+# SQLite databases: learner progress is local data, never committed
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.db
+backend/data/
+
+# Logs and test artefacts
+*.log
+coverage/
+
+# Editors / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
