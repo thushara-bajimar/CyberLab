@@ -2,6 +2,8 @@ import express, { type Express } from 'express'
 import type { DB } from './db/connection.js'
 import { apiNotFound, errorHandler } from './middleware/errorHandler.js'
 import { healthRouter } from './routes/health.js'
+import { apiRouter } from './routes/index.js'
+import { createServices } from './services/index.js'
 
 export interface AppDependencies {
   db: DB
@@ -17,6 +19,7 @@ export function createApp({ db }: AppDependencies): Express {
   app.use(express.json({ limit: '10kb' }))
 
   app.use('/api/health', healthRouter(db))
+  app.use('/api', apiRouter(createServices(db)))
 
   app.use('/api', apiNotFound)
   app.use(errorHandler)
