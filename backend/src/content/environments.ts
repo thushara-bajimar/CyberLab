@@ -349,6 +349,16 @@ export const environments: TerminalEnvironment[] = [
   },
 ]
 
+/** Recursively freezes an object so no code path can modify the simulated environments at runtime. */
+function deepFreeze<T>(value: T): T {
+  if (value && typeof value === 'object' && !Object.isFrozen(value)) {
+    Object.freeze(value)
+    for (const child of Object.values(value)) deepFreeze(child)
+  }
+  return value
+}
+deepFreeze(environments)
+
 export function findEnvironment(id: string): TerminalEnvironment | undefined {
   return environments.find((environment) => environment.id === id)
 }

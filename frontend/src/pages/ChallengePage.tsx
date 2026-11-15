@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom'
 import { getChallenge } from '../api/endpoints'
 import type { ChallengeDetail } from '../api/types'
 import { ExplanationPanel } from '../components/challenge/ExplanationPanel'
+import { Terminal } from '../components/challenge/Terminal'
 import { DifficultyBadge, StatusBadge } from '../components/ui/Badges'
 import { PageHeader } from '../components/ui/PageHeader'
 import { PlannedFeature } from '../components/ui/PlannedFeature'
@@ -21,19 +22,14 @@ function Panel({ title, icon: Icon, children, id }: { title: string; icon: typeo
   )
 }
 
-function TerminalPanel({ terminal }: { terminal: NonNullable<ChallengeDetail['terminal']> }) {
+function TerminalPanel({ challengeId, terminal }: { challengeId: string; terminal: NonNullable<ChallengeDetail['terminal']> }) {
   return (
     <Panel title="Simulated terminal" icon={TerminalSquare} id="terminal-heading">
-      <div className="rounded-md border border-slate-800 bg-black/60 p-4 font-mono text-sm text-slate-300">
-        <p className="text-slate-500"># Environment: {terminal.title}</p>
-        <p>
-          <span className="text-emerald-400">
-            {terminal.user}@{terminal.hostname}
-          </span>
-          :<span className="text-sky-400">~</span>$ <span className="animate-pulse">▌</span>
-        </p>
-      </div>
-      <PlannedFeature phase={4}>the interactive terminal. You will type commands such as ls, cd and cat here; everything is simulated and nothing runs on a real machine.</PlannedFeature>
+      <p className="mb-3 text-sm text-slate-400">
+        Environment: <span className="text-slate-200">{terminal.title}</span>. Commands run in a read-only simulation on the server; nothing you type
+        touches a real system.
+      </p>
+      <Terminal key={challengeId} challengeId={challengeId} environment={terminal} />
     </Panel>
   )
 }
@@ -169,7 +165,7 @@ export function ChallengePage() {
               </span>
             </p>
           </Panel>
-          {data.terminal && <TerminalPanel terminal={data.terminal} />}
+          {data.terminal && <TerminalPanel challengeId={data.id} terminal={data.terminal} />}
           <AnswerPanel key={data.id} challenge={data} />
           {data.explanation && <ExplanationPanel explanation={data.explanation} />}
         </div>

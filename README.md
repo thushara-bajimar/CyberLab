@@ -5,11 +5,11 @@
 CyberLab is a beginner-friendly platform for practising cybersecurity through guided challenges, a **simulated**
 browser terminal, progressive hints, server-side scoring and progress tracking.
 
-> **Project status: Phases 1–3 complete** (foundation, layout and dashboard, modules and challenges).
-> Learners can browse 7 modules and 14 challenges and read every scenario, instruction and resource.
-> **Not implemented yet:** the interactive simulated terminal (Phase 4), revealing hints and checking answers
-> with scoring (Phase 5); the challenge page labels these parts "Coming in Phase N". Because answers cannot be
-> submitted yet, progress and points stay at zero. See [docs/PLAN.md](docs/PLAN.md) for the full design.
+> **Project status: Phases 1–4 complete** (foundation, dashboard, modules and challenges, simulated terminal).
+> Learners can browse 7 modules and 14 challenges and investigate the 9 terminal challenges in a safe,
+> simulated terminal. **Not implemented yet:** revealing hints and checking answers with scoring (Phase 5);
+> the challenge page labels these parts "Coming in Phase 5". Because answers cannot be submitted yet, progress
+> and points stay at zero. See [docs/PLAN.md](docs/PLAN.md) for the full design.
 
 ## What works today
 
@@ -19,10 +19,11 @@ browser terminal, progressive hints, server-side scoring and progress tracking.
 | Modules | List with progress per module; detail page with introduction, key concepts, objectives and challenges |
 | Challenges | List with status filter; detail page with scenario, objective, instructions, resources, hint-cost information, answer form (submit disabled until Phase 5), explanation shown only after completion |
 | Course content | 7 modules, 14 challenges, 42 hints, 7 simulated terminal environments, defined in `backend/src/content/` and loaded into SQLite at startup |
-| API | `GET /api/health`, `/api/dashboard`, `/api/modules`, `/api/modules/:moduleId`, `/api/challenges`, `/api/challenges/:challengeId` |
+| Simulated terminal | Browser terminal with prompt, command history (↑/↓), `clear` / Ctrl+L, error highlighting; commands run in a read-only in-memory environment on the server |
+| API | `GET /api/health`, `/api/dashboard`, `/api/modules`, `/api/modules/:moduleId`, `/api/challenges`, `/api/challenges/:challengeId`; `POST /api/terminal/execute` |
 | Security of content | Answer rules, unrevealed hints and explanations of unfinished challenges are never sent to the browser (covered by tests) |
 | SQLite database | Schema v1 with foreign keys, CHECK constraints, indexes, WAL; guest learner profile; content re-seeded on start without touching progress |
-| Tests | 40 backend tests: health, errors, schema, persistence, config, scoring, dashboard, content validation, seeding, content API |
+| Tests | 89 backend tests: health, errors, schema, persistence, config, scoring, dashboard, content validation, seeding, content API, terminal engine, terminal security, terminal API |
 
 ## Course content
 
@@ -39,6 +40,45 @@ browser terminal, progressive hints, server-side scoring and progress tracking.
 Every challenge has three progressive hints and an explanation (solution, why it is correct, concept, commands,
 common mistakes, real-world relevance). A content test checks that every terminal answer can actually be found
 in its simulated environment.
+
+## Simulated terminal
+
+The terminal looks like a Linux shell but is a **simulation**: a small TypeScript program
+(`backend/src/terminal/`) that reads fictional files stored as JavaScript objects. It never runs a real
+command.
+
+```
+browser  --POST /api/terminal/execute { challengeId, command, cwd, history }-->  Express
+  -> zod validation (≤ 200 chars, no control characters, ≤ 50 history entries, no extra fields)
+  -> tokenizer.ts   split into words; quotes supported; ; & | < > ` $( ) and $VAR rejected with an explanation
+  -> engine.ts      look the command up in the allowlist (a Map) for this challenge's environment
+  -> commands.ts    pure handler reads the frozen in-memory filesystem / simulated network data
+  <- { output, cwd, clear, isError }
+```
+
+| Commands | Where |
+|---|---|
+| `help`, `clear`, `history`, `pwd`, `whoami`, `echo`, `ls [-a] [-l]`, `cd`, `cat` | every terminal challenge |
+| `grep [-i] [-c] [-n] [-v] PATTERN FILE...` | password audit, phishing mailbox, forensics |
+| `find [PATH] [-name PATTERN] [-type f\|d]` | forensics |
+| `ipconfig`, `ping [-c N] HOST` | networking |
+| `base64 [-d] FILE` | cryptography |
+
+### Security model
+
+| Threat | Protection |
+|---|---|
+| Running real commands on the host | No `child_process`, `exec`, `spawn`, `eval`, `Function` or `vm` anywhere in the backend; a test scans the source and fails if any appear |
+| Reading host files | The engine imports no filesystem module; paths resolve only inside the in-memory tree and `..` stops at the simulated `/` |
+| Changing files | Every environment is deep-frozen; no command writes; tests prove hostile commands leave the environments unchanged |
+| Shell tricks (chaining, pipes, redirection, substitution, variables) | Rejected by the tokenizer before any command runs |
+| Environment variables / secrets | Variables are rejected; a test sets a canary variable and checks no command can print it |
+| Network scanning or attacks | `ping`/`ipconfig` print predefined data; real network tools return an explanation |
+| JavaScript prototype tricks (`constructor`, `__proto__`) | Commands are looked up in a `Map`; files with `Object.hasOwn` |
+| Denial of service | Body ≤ 10 KB, command ≤ 200 characters, ≤ 20 arguments, output ≤ 400 lines; `grep` matches plain text and `find` uses a linear-time wildcard matcher instead of regular expressions |
+| Tampered requests | The working folder sent by the browser is re-validated and falls back to the home folder |
+
+Not covered in the MVP: rate limiting and authentication (the API is meant to run locally, bound to 127.0.0.1).
 
 ## Scoring policy
 
@@ -111,7 +151,8 @@ CyberLab/
 │   ├── src/content/           modules, challenges, hints, simulated terminal environments
 │   ├── src/db/                connection, schema, seeding
 │   ├── src/repositories/      SQL queries
-│   ├── src/services/          scoring, dashboard, module and challenge logic
+│   ├── src/services/          scoring, dashboard, module, challenge and terminal logic
+│   ├── src/terminal/          tokenizer, virtual filesystem, command handlers, engine
 │   ├── src/controllers/       request validation and responses
 │   ├── src/routes/            URL -> controller wiring
 │   └── tests/                 Vitest + supertest

@@ -105,3 +105,17 @@ export interface ChallengeDetail extends ChallengeSummary {
   explanation: Explanation | null
   navigation: { previousId: string | null; nextId: string | null }
 }
+
+export interface TerminalRequest {
+  challengeId: string
+  command: string
+  cwd?: string
+  history?: string[]
+}
+
+export interface TerminalResponse {
+  output: string
+  cwd: string
+  clear: boolean
+  isError: boolean
+}

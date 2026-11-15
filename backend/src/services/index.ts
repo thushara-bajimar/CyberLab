@@ -4,6 +4,7 @@ import { createProgressRepository } from '../repositories/progressRepository.js'
 import { createChallengeService } from './challengeService.js'
 import { createDashboardService } from './dashboardService.js'
 import { createModuleService } from './moduleService.js'
+import { createTerminalService } from './terminalService.js'
 
 /** Wires repositories into services once per app instance (simple manual dependency injection). */
 export function createServices(db: DB) {
@@ -13,6 +14,7 @@ export function createServices(db: DB) {
     dashboard: createDashboardService(content, progress),
     modules: createModuleService(content, progress),
     challenges: createChallengeService(content, progress),
+    terminal: createTerminalService(content),
   }
 }
 

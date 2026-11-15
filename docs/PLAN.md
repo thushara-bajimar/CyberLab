@@ -244,7 +244,7 @@ CyberLab/
 │   │   ├── services/          scoring, hints, progress, dashboard
 │   │   ├── repositories/      SQL queries
 │   │   ├── validation/        zod schemas for request parameters and bodies
-│   │   ├── terminal/          parser, virtual filesystem, command handlers (Phase 4)
+│   │   ├── terminal/          tokenizer, virtual filesystem, command handlers, engine
 │   │   └── middleware/        error handling, 404
 │   └── tests/
 └── frontend/
