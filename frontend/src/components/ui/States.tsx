@@ -1,5 +1,6 @@
 import { AlertTriangle, Inbox, Loader2, RefreshCw } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { Link } from 'react-router-dom'
 
 export function LoadingState({ label = 'Loading…' }: { label?: string }) {
   return (
@@ -29,6 +30,20 @@ export function ErrorState({ message, onRetry }: { message: string; onRetry?: ()
           </button>
         )}
       </div>
+    </div>
+  )
+}
+
+/** For content that does not exist (HTTP 404): no retry, a link back instead. */
+export function NotFoundState({ what, backTo, backLabel }: { what: string; backTo: string; backLabel: string }) {
+  return (
+    <div className="mx-auto max-w-md py-12 text-center" role="alert">
+      <p className="font-mono text-emerald-400">404</p>
+      <h1 className="mt-2 text-2xl font-semibold">{what} not found</h1>
+      <p className="mt-2 text-slate-400">The address may be mistyped, or the content may have been removed from the course.</p>
+      <Link to={backTo} className="mt-6 inline-block rounded-md bg-emerald-500 px-4 py-2 font-medium text-slate-950 hover:bg-emerald-400">
+        {backLabel}
+      </Link>
     </div>
   )
 }

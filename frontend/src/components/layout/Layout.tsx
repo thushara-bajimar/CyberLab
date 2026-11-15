@@ -1,4 +1,4 @@
-import { LayoutDashboard, ShieldCheck, type LucideIcon } from 'lucide-react'
+import { BookOpen, LayoutDashboard, ShieldCheck, Swords, type LucideIcon } from 'lucide-react'
 import { NavLink, Outlet, ScrollRestoration } from 'react-router-dom'
 import { getHealth } from '../../api/endpoints'
 import { useApi } from '../../hooks/useApi'
@@ -10,7 +10,11 @@ interface NavItem {
   end?: boolean
 }
 
-const navItems: NavItem[] = [{ to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true }]
+const navItems: NavItem[] = [
+  { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
+  { to: '/modules', label: 'Modules', icon: BookOpen },
+  { to: '/challenges', label: 'Challenges', icon: Swords },
+]
 
 function ServerStatus() {
   const health = useApi(getHealth)
@@ -37,7 +41,7 @@ export function Layout() {
             <ShieldCheck className="size-6 text-emerald-400" aria-hidden="true" />
             CyberLab
           </NavLink>
-          <nav aria-label="Main navigation" className="order-3 w-full sm:order-none sm:w-auto">
+          <nav aria-label="Main navigation" className="order-3 w-full sm:order-0 sm:w-auto">
             <ul className="flex gap-1">
               {navItems.map(({ to, label, icon: Icon, end }) => (
                 <li key={to}>

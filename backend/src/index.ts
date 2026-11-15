@@ -1,9 +1,12 @@
 import { createApp } from './app.js'
 import { loadConfig } from './config.js'
+import { challenges, modules } from './content/index.js'
 import { openDatabase } from './db/connection.js'
+import { seedContent } from './db/seed.js'
 
 const config = loadConfig()
 const db = openDatabase(config.databasePath)
+seedContent(db, modules, challenges)
 const app = createApp({ db })
 
 const server = app.listen(config.port, config.host, () => {

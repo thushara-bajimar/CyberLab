@@ -34,7 +34,7 @@ progressive hints, automatic checking, and an explanation after every challenge.
 
 | In the MVP | Not in the MVP (future work) |
 |---|---|
-| 6 modules, 12 challenges (2 per module) | Large challenge library, user-created challenges |
+| 7 modules, 14 challenges (2 per module) | Large challenge library, user-created challenges |
 | Simulated terminal with an allowlisted command set | Real shells, containers, VMs, real network tools |
 | 3 progressive hints per challenge, hint penalty | Adaptive hints, AI tutor |
 | Server-side answer checking and scoring | Leaderboards, competitions |
@@ -87,24 +87,31 @@ without redesigning the schema.
 6. **Scoring** — difficulty base points minus hint penalty, awarded once.
 7. **Progress tracking** — per-challenge progress rows + activity log.
 
-### Planned initial content (12 challenges)
+### Initial content (14 challenges, implemented in Phase 3)
 
-| Module | Challenge (working title) | Type | Uses terminal |
-|---|---|---|---|
-| Cybersecurity Fundamentals | The CIA Triad in practice | multiple choice | no |
-| Cybersecurity Fundamentals | Least privilege | multiple choice | no |
-| Linux & Command Line | Find the onboarding note (`pwd`, `ls`, `cd`, `cat`) | text answer | yes |
-| Linux & Command Line | Hidden files (`ls -a`) | text answer | yes |
-| Networking Fundamentals | What is my IP address? (`ipconfig`) | text answer | yes |
-| Networking Fundamentals | Which server is down? (`ping`) | text answer | yes |
-| Password Security | Strongest password | multiple choice | no |
-| Password Security | Policy audit of a user list (`cat`, `grep`) | text answer | yes |
-| Cryptography Basics | Decode Base64 (encoding is not encryption) | text answer | no |
-| Cryptography Basics | Caesar cipher | text answer | no |
-| Phishing Awareness | Find the real domain in a deceptive URL | text answer | no |
-| Digital Forensics | Brute-force investigation in `auth.log` (`grep`, `find`) | text answer | yes |
+*Correction (Phase 3):* the first draft of this plan said "6 modules, 12 challenges" but its table listed 7
+modules. The implemented course has **7 modules with 2 challenges each**. Points: 9 beginner x 100 + 5
+intermediate x 200 = **1,900 points** in total.
 
-Web Security is deliberately left for a later phase: teaching it well needs more careful simulated scenarios.
+| Module | Challenge | Difficulty | Answer | Terminal environment / commands |
+|---|---|---|---|---|
+| Cybersecurity Fundamentals | The CIA Triad in Practice | beginner | multiple choice | — |
+| Cybersecurity Fundamentals | Least Privilege | beginner | multiple choice | — |
+| Linux & Command-Line Basics | Find the Onboarding Note | beginner | text | `linux-onboarding`: `pwd`, `ls`, `cd`, `cat` |
+| Linux & Command-Line Basics | Hidden Files | beginner | text | `linux-hidden`: `ls -a`, `cat` |
+| Networking Fundamentals | Find the Default Gateway | beginner | text | `network-office`: `ipconfig` |
+| Networking Fundamentals | Which Server Is Down? | beginner | text | `network-office`: `cat`, `ping` |
+| Password Security | Choose the Strongest Password | beginner | multiple choice | — |
+| Password Security | Audit Admin Accounts for MFA | intermediate | text | `password-audit`: `cat`, `grep` |
+| Cryptography Basics | Encoding Is Not Encryption | beginner | text | `crypto-workbench`: `cat`, `base64 -d` |
+| Cryptography Basics | Break a Caesar Cipher | intermediate | text | — |
+| Phishing Awareness | Who Really Owns This Link? | beginner | text | — |
+| Phishing Awareness | Read the Email Headers | intermediate | text | `phishing-mailbox`: `cat`, `grep` |
+| Digital Forensics Basics | Investigate a Brute-Force Attack | intermediate | text | `forensics-server`: `grep` |
+| Digital Forensics Basics | Find What the Attacker Left Behind | intermediate | text | `forensics-server`: `find`, `cat` |
+
+`base64` was added to the planned command list for the cryptography challenge (decode only from files; no
+pipes). Web Security is deliberately left for later: teaching it well needs more careful simulated scenarios.
 
 ## 8. User journeys
 
@@ -213,7 +220,8 @@ points awarded   = base - hints_used x 0.10 x base        (computed once, on the
 ```
 
 - Wrong answers cost nothing (learning is encouraged); they increase `attempts`.
-- After completion, further submissions and hint reveals do not change points (duplicate protection).
+- After completion, further submissions and hint reveals do not change points (duplicate protection), and all
+  hints are shown for review at no cost.
 - The client never sends points; the server computes and stores them.
 
 ## 15. Folder structure
@@ -235,7 +243,8 @@ CyberLab/
 │   │   ├── controllers/       request validation + responses
 │   │   ├── services/          scoring, hints, progress, dashboard
 │   │   ├── repositories/      SQL queries
-│   │   ├── terminal/          parser, virtual filesystem, command handlers
+│   │   ├── validation/        zod schemas for request parameters and bodies
+│   │   ├── terminal/          parser, virtual filesystem, command handlers (Phase 4)
 │   │   └── middleware/        error handling, 404
 │   └── tests/
 └── frontend/

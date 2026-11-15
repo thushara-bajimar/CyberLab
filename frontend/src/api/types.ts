@@ -42,3 +42,66 @@ export interface DashboardResponse {
     reason: 'continue' | 'next'
   } | null
 }
+
+export interface ModuleSummary {
+  id: string
+  title: string
+  summary: string
+  difficulty: Difficulty
+  order: number
+  totalChallenges: number
+  completedChallenges: number
+  pointsEarned: number
+  pointsPossible: number
+  status: ChallengeStatus
+}
+
+export interface ChallengeSummary {
+  id: string
+  moduleId: string
+  moduleTitle: string
+  title: string
+  difficulty: Difficulty
+  answerType: 'text' | 'choice'
+  usesTerminal: boolean
+  basePoints: number
+  status: ChallengeStatus
+  pointsAwarded: number
+}
+
+export interface ModuleDetail extends ModuleSummary {
+  introduction: string
+  concept: string
+  objectives: string[]
+  challenges: ChallengeSummary[]
+}
+
+export interface Explanation {
+  solution: string
+  why: string
+  concept: string
+  commands: { command: string; purpose: string }[]
+  commonMistakes: string[]
+  realWorld: string
+}
+
+export interface ChallengeDetail extends ChallengeSummary {
+  scenario: string
+  objective: string
+  instructions: string[]
+  resources: { title: string; body: string }[]
+  options: { id: string; text: string }[] | null
+  terminal: { environmentId: string; title: string; user: string; hostname: string; home: string } | null
+  scoring: { basePoints: number; hintPenaltyPercent: number; pointsAvailable: number | null }
+  hints: { total: number; used: number; revealed: { number: number; text: string }[] }
+  progress: {
+    status: ChallengeStatus
+    attempts: number
+    hintsUsed: number
+    pointsAwarded: number
+    startedAt: string | null
+    completedAt: string | null
+  }
+  explanation: Explanation | null
+  navigation: { previousId: string | null; nextId: string | null }
+}
