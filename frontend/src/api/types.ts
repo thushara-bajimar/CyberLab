@@ -133,3 +133,38 @@ export interface SubmitResponse {
   attempts: number
   challenge: ChallengeDetail
 }
+
+export interface ChallengeProgressRow {
+  id: string
+  title: string
+  moduleId: string
+  moduleTitle: string
+  difficulty: Difficulty
+  status: ChallengeStatus
+  attempts: number
+  hintsUsed: number
+  pointsAwarded: number
+  basePoints: number
+  startedAt: string | null
+  completedAt: string | null
+}
+
+export interface ProgressResponse {
+  totals: DashboardResponse['totals'] & { attempts: number; hintsUsed: number; started: number }
+  modules: (ModuleSummary & { completedAt: string | null })[]
+  challenges: ChallengeProgressRow[]
+  recentActivity: ActivityItem[]
+  activityTotal: number
+}
+
+export interface ActivityPage {
+  items: ActivityItem[]
+  total: number
+  limit: number
+  offset: number
+}
+
+export interface ResetResponse {
+  deleted: { progressRows: number; activityRows: number }
+  progress: ProgressResponse
+}

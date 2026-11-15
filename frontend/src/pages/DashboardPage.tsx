@@ -1,14 +1,14 @@
-import { ArrowRight, CheckCircle2, Clock, Flag, Layers, Percent, Trophy } from 'lucide-react'
+import { ArrowRight, CheckCircle2, Clock, Layers, Percent, Trophy } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { getDashboard } from '../api/endpoints'
 import type { DashboardResponse } from '../api/types'
+import { ActivityList } from '../components/content/ActivityList'
 import { DifficultyBadge } from '../components/ui/Badges'
 import { PageHeader } from '../components/ui/PageHeader'
 import { ProgressBar } from '../components/ui/ProgressBar'
 import { StatCard } from '../components/ui/StatCard'
 import { EmptyState, ErrorState, LoadingState } from '../components/ui/States'
 import { useApi } from '../hooks/useApi'
-import { activityLabel, timeAgo } from '../utils/format'
 
 function Recommended({ recommended, allDone }: { recommended: DashboardResponse['recommended']; allDone: boolean }) {
   if (!recommended) {
@@ -103,24 +103,12 @@ export function DashboardPage() {
           {recentActivity.length === 0 ? (
             <EmptyState title="No activity yet">Hints you reveal, answers you submit and challenges you complete will be listed here.</EmptyState>
           ) : (
-            <ol className="flex flex-col gap-3">
-              {recentActivity.map((item) => (
-                <li key={item.id} className="flex gap-3 text-sm">
-                  <Flag className={`mt-0.5 size-4 shrink-0 ${item.eventType === 'completed' ? 'text-emerald-400' : 'text-slate-500'}`} aria-hidden="true" />
-                  <div>
-                    <p className="text-slate-200">
-                      {activityLabel[item.eventType]}:{' '}
-                      <Link to={`/challenges/${item.challengeId}`} className="text-emerald-300 hover:underline">
-                        {item.challengeTitle}
-                      </Link>
-                    </p>
-                    <p className="text-xs text-slate-500">
-                      {item.detail} · <time dateTime={item.createdAt}>{timeAgo(item.createdAt)}</time>
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ol>
+            <>
+              <ActivityList items={recentActivity} />
+              <Link to="/progress" className="mt-4 inline-flex items-center gap-1 text-sm text-emerald-300 hover:underline">
+                View full progress <ArrowRight className="size-4" aria-hidden="true" />
+              </Link>
+            </>
           )}
         </Section>
       </div>

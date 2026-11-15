@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { contentController } from '../controllers/contentController.js'
 import { dashboardController } from '../controllers/dashboardController.js'
+import { progressController } from '../controllers/progressController.js'
 import { terminalController } from '../controllers/terminalController.js'
 import type { Services } from '../services/index.js'
 
@@ -10,6 +11,7 @@ export function apiRouter(services: Services): Router {
   const dashboard = dashboardController(services)
   const content = contentController(services)
   const terminal = terminalController(services)
+  const progress = progressController(services)
 
   router.get('/dashboard', dashboard.show)
   router.get('/modules', content.listModules)
@@ -19,6 +21,9 @@ export function apiRouter(services: Services): Router {
   router.post('/challenges/:challengeId/hints', content.revealHint)
   router.post('/challenges/:challengeId/submit', content.submitAnswer)
   router.post('/terminal/execute', terminal.execute)
+  router.get('/progress', progress.show)
+  router.post('/progress/reset', progress.reset)
+  router.get('/activity', progress.activity)
 
   return router
 }

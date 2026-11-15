@@ -1,4 +1,4 @@
-import { BookOpen, LayoutDashboard, ShieldCheck, Swords, type LucideIcon } from 'lucide-react'
+import { BookOpen, LayoutDashboard, ShieldCheck, Swords, TrendingUp, type LucideIcon } from 'lucide-react'
 import { NavLink, Outlet, ScrollRestoration } from 'react-router-dom'
 import { getHealth } from '../../api/endpoints'
 import { useApi } from '../../hooks/useApi'
@@ -14,6 +14,7 @@ const navItems: NavItem[] = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/modules', label: 'Modules', icon: BookOpen },
   { to: '/challenges', label: 'Challenges', icon: Swords },
+  { to: '/progress', label: 'Progress', icon: TrendingUp },
 ]
 
 function ServerStatus() {
@@ -42,14 +43,15 @@ export function Layout() {
             CyberLab
           </NavLink>
           <nav aria-label="Main navigation" className="order-3 w-full sm:order-0 sm:w-auto">
-            <ul className="flex gap-1">
+            {/* Phones: four equal columns with the icon above a small label. From sm upwards: one row. */}
+            <ul className="grid grid-cols-4 gap-1 sm:flex">
               {navItems.map(({ to, label, icon: Icon, end }) => (
                 <li key={to}>
                   <NavLink
                     to={to}
                     end={end}
                     className={({ isActive }) =>
-                      `inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm transition-colors ${
+                      `flex flex-col items-center gap-0.5 rounded-md px-1 py-1.5 text-xs transition-colors sm:flex-row sm:gap-2 sm:px-3 sm:text-sm ${
                         isActive ? 'bg-slate-800 text-emerald-300' : 'text-slate-400 hover:bg-slate-900 hover:text-slate-100'
                       }`
                     }

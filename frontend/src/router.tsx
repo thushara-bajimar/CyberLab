@@ -6,6 +6,7 @@ import { DashboardPage } from './pages/DashboardPage'
 import { ModuleDetailPage } from './pages/ModuleDetailPage'
 import { ModulesPage } from './pages/ModulesPage'
 import { NotFoundPage } from './pages/NotFoundPage'
+import { ProgressPage } from './pages/ProgressPage'
 
 /** Every page shares the Layout (header, navigation, footer); `*` catches unknown URLs. */
 export const router = createBrowserRouter([
@@ -19,6 +20,7 @@ export const router = createBrowserRouter([
       { path: 'modules/:moduleId', element: <ModuleDetailPage /> },
       { path: 'challenges', element: <ChallengesPage /> },
       { path: 'challenges/:challengeId', element: <ChallengePage /> },
+      { path: 'progress', element: <ProgressPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

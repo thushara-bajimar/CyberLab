@@ -37,7 +37,8 @@ export function createProgressRepository(db: DB) {
       return (db.prepare(`${PROGRESS_SELECT} WHERE user_id = ? AND challenge_id = ?`).get(userId, challengeId) as ProgressRecord | undefined) ?? null
     },
 
-    recentActivity(userId: number, limit: number): ActivityRecord[] {
+    /** Newest first; `offset` skips entries for paging through the full history. */
+    recentActivity(userId: number, limit: number, offset = 0): ActivityRecord[] {
       return db
         .prepare(
           `SELECT a.id, a.challenge_id AS challengeId, c.title AS challengeTitle, m.title AS moduleTitle,
@@ -47,9 +48,21 @@ export function createProgressRepository(db: DB) {
            JOIN modules m ON m.id = c.module_id
            WHERE a.user_id = ?
            ORDER BY a.created_at DESC, a.id DESC
-           LIMIT ?`,
+           LIMIT ? OFFSET ?`,
         )
-        .all(userId, limit) as ActivityRecord[]
+        .all(userId, limit, offset) as ActivityRecord[]
+    },
+
+    countActivity(userId: number): number {
+      return (db.prepare('SELECT COUNT(*) AS count FROM activity_log WHERE user_id = ?').get(userId) as { count: number }).count
+    },
+
+    /** Deletes one learner's progress and activity in a single transaction. Course content is untouched. */
+    resetProgress(userId: number): { progressRows: number; activityRows: number } {
+      return db.transaction(() => ({
+        activityRows: db.prepare('DELETE FROM activity_log WHERE user_id = ?').run(userId).changes,
+        progressRows: db.prepare('DELETE FROM challenge_progress WHERE user_id = ?').run(userId).changes,
+      }))()
     },
 
     getDisplayName(userId: number): string {

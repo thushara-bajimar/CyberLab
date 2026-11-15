@@ -5,11 +5,10 @@
 CyberLab is a beginner-friendly platform for practising cybersecurity through guided challenges, a **simulated**
 browser terminal, progressive hints, server-side scoring and progress tracking.
 
-> **Project status: Phases 1–5 complete** (foundation, dashboard, modules and challenges, simulated terminal,
-> hints and scoring). Every challenge can be completed end to end: investigate, reveal hints, submit answers,
-> earn points, read the explanation, and see progress on the dashboard. Still planned: a dedicated progress
-> page (Phase 6), API hardening, a security test pass and UI polish (Phases 7–9). See
-> [docs/PLAN.md](docs/PLAN.md) for the full design.
+> **Project status: Phases 1–6 complete** (foundation, dashboard, modules and challenges, simulated terminal,
+> hints and scoring, progress tracking with reset). Every challenge can be completed end to end, and progress is
+> stored in SQLite and survives restarts. Still planned: API hardening, a security test pass and UI polish
+> (Phases 7–9). See [docs/PLAN.md](docs/PLAN.md) for the full design.
 
 ## What works today
 
@@ -19,11 +18,12 @@ browser terminal, progressive hints, server-side scoring and progress tracking.
 | Modules | List with progress per module; detail page with introduction, key concepts, objectives and challenges |
 | Challenges | List with status filter; detail page with scenario, objective, instructions, resources, progressive hints (cost shown and confirmed before revealing), answer form with instant server-side feedback, completion summary, explanation unlocked after completion |
 | Course content | 7 modules, 14 challenges, 42 hints, 7 simulated terminal environments, defined in `backend/src/content/` and loaded into SQLite at startup |
+| Progress | Progress page: totals (completed, started, points, attempts, hints), module completion with finish times, every challenge's status / attempts / hints / points / completion time, full activity history with paging, and a **reset** that requires typing RESET |
 | Simulated terminal | Browser terminal with prompt, command history (↑/↓), `clear` / Ctrl+L, error highlighting; commands run in a read-only in-memory environment on the server |
-| API | `GET /api/health`, `/api/dashboard`, `/api/modules`, `/api/modules/:moduleId`, `/api/challenges`, `/api/challenges/:challengeId`; `POST /api/challenges/:challengeId/hints`, `/api/challenges/:challengeId/submit`, `/api/terminal/execute` |
+| API | `GET /api/health`, `/api/dashboard`, `/api/modules`, `/api/modules/:moduleId`, `/api/challenges`, `/api/challenges/:challengeId`, `/api/progress`, `/api/activity?limit=&offset=`; `POST /api/challenges/:challengeId/hints`, `/api/challenges/:challengeId/submit`, `/api/terminal/execute`, `/api/progress/reset` |
 | Security of content | Answer rules, unrevealed hints and explanations of unfinished challenges are never sent to the browser (covered by tests) |
 | SQLite database | Schema v1 with foreign keys, CHECK constraints, indexes, WAL; guest learner profile; content re-seeded on start without touching progress |
-| Tests | 106 backend tests: health, errors, schema, persistence, config, scoring, dashboard, content validation, seeding, content API, terminal engine, terminal security, terminal API, answer checking, hints and submissions |
+| Tests | 113 backend tests: health, errors, schema, persistence, config, scoring, dashboard, content validation, seeding, content API, terminal engine, terminal security, terminal API, answer checking, hints and submissions, progress, activity paging and reset |
 
 ## Course content
 
@@ -79,6 +79,16 @@ browser  --POST /api/terminal/execute { challengeId, command, cwd, history }--> 
 | Tampered requests | The working folder sent by the browser is re-validated and falls back to the home folder |
 
 Not covered in the MVP: rate limiting and authentication (the API is meant to run locally, bound to 127.0.0.1).
+
+## Progress and reset
+
+Progress lives in two tables: `challenge_progress` (one row per started challenge: status, attempts, hints
+used, points, start and completion time) and `activity_log` (one row per hint, wrong attempt or completion).
+Because they are in the SQLite file, progress survives restarts. A challenge with no row is "not started".
+
+`POST /api/progress/reset` with the body `{ "confirm": "RESET" }` deletes this learner's rows from both tables in
+one transaction and returns how many were removed. Course content is not touched, and any other value of
+`confirm` (including `reset`) is rejected. The Progress page only enables its reset button after RESET is typed.
 
 ## Scoring policy
 
