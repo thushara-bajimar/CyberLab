@@ -16,6 +16,8 @@ export function apiRouter(services: Services): Router {
   router.get('/modules/:moduleId', content.showModule)
   router.get('/challenges', content.listChallenges)
   router.get('/challenges/:challengeId', content.showChallenge)
+  router.post('/challenges/:challengeId/hints', content.revealHint)
+  router.post('/challenges/:challengeId/submit', content.submitAnswer)
   router.post('/terminal/execute', terminal.execute)
 
   return router

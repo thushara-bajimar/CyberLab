@@ -5,11 +5,11 @@
 CyberLab is a beginner-friendly platform for practising cybersecurity through guided challenges, a **simulated**
 browser terminal, progressive hints, server-side scoring and progress tracking.
 
-> **Project status: Phases 1–4 complete** (foundation, dashboard, modules and challenges, simulated terminal).
-> Learners can browse 7 modules and 14 challenges and investigate the 9 terminal challenges in a safe,
-> simulated terminal. **Not implemented yet:** revealing hints and checking answers with scoring (Phase 5);
-> the challenge page labels these parts "Coming in Phase 5". Because answers cannot be submitted yet, progress
-> and points stay at zero. See [docs/PLAN.md](docs/PLAN.md) for the full design.
+> **Project status: Phases 1–5 complete** (foundation, dashboard, modules and challenges, simulated terminal,
+> hints and scoring). Every challenge can be completed end to end: investigate, reveal hints, submit answers,
+> earn points, read the explanation, and see progress on the dashboard. Still planned: a dedicated progress
+> page (Phase 6), API hardening, a security test pass and UI polish (Phases 7–9). See
+> [docs/PLAN.md](docs/PLAN.md) for the full design.
 
 ## What works today
 
@@ -17,13 +17,13 @@ browser terminal, progressive hints, server-side scoring and progress tracking.
 |---|---|
 | Dashboard | Totals, completion %, points, module progress, recent activity and recommended next challenge, all computed from the database (with clear empty states) |
 | Modules | List with progress per module; detail page with introduction, key concepts, objectives and challenges |
-| Challenges | List with status filter; detail page with scenario, objective, instructions, resources, hint-cost information, answer form (submit disabled until Phase 5), explanation shown only after completion |
+| Challenges | List with status filter; detail page with scenario, objective, instructions, resources, progressive hints (cost shown and confirmed before revealing), answer form with instant server-side feedback, completion summary, explanation unlocked after completion |
 | Course content | 7 modules, 14 challenges, 42 hints, 7 simulated terminal environments, defined in `backend/src/content/` and loaded into SQLite at startup |
 | Simulated terminal | Browser terminal with prompt, command history (↑/↓), `clear` / Ctrl+L, error highlighting; commands run in a read-only in-memory environment on the server |
-| API | `GET /api/health`, `/api/dashboard`, `/api/modules`, `/api/modules/:moduleId`, `/api/challenges`, `/api/challenges/:challengeId`; `POST /api/terminal/execute` |
+| API | `GET /api/health`, `/api/dashboard`, `/api/modules`, `/api/modules/:moduleId`, `/api/challenges`, `/api/challenges/:challengeId`; `POST /api/challenges/:challengeId/hints`, `/api/challenges/:challengeId/submit`, `/api/terminal/execute` |
 | Security of content | Answer rules, unrevealed hints and explanations of unfinished challenges are never sent to the browser (covered by tests) |
 | SQLite database | Schema v1 with foreign keys, CHECK constraints, indexes, WAL; guest learner profile; content re-seeded on start without touching progress |
-| Tests | 89 backend tests: health, errors, schema, persistence, config, scoring, dashboard, content validation, seeding, content API, terminal engine, terminal security, terminal API |
+| Tests | 106 backend tests: health, errors, schema, persistence, config, scoring, dashboard, content validation, seeding, content API, terminal engine, terminal security, terminal API, answer checking, hints and submissions |
 
 ## Course content
 
@@ -82,10 +82,31 @@ Not covered in the MVP: rate limiting and authentication (the API is meant to ru
 
 ## Scoring policy
 
-Base points are 100 (beginner), 200 (intermediate) or 300 (advanced). Each hint revealed before solving
-removes 10% of the base. Wrong answers cost nothing. Points are awarded once, by the server. The course is
-worth 1,900 points. (Hint reveals and answer checking arrive in Phase 5; the formula is already implemented
-and tested in `backend/src/services/scoring.ts`.)
+```
+points awarded = base - hints used x 10% of base
+base           = 100 beginner | 200 intermediate | 300 advanced
+```
+
+| Situation | What happens |
+|---|---|
+| Hint revealed before solving | Costs 10% of the base; the page states the exact cost and asks for confirmation first |
+| Same hint requested again (double click, retry) | Ignored: the request names the hint number, so a repeat changes nothing |
+| Hint requested out of order | Refused (HTTP 409) |
+| Wrong answer | No points lost; the attempt is counted and logged |
+| Correct answer | Points computed by the server from the hints actually used; explanation and all hints unlocked |
+| Submitting again after completion | Reported as already completed; points, attempts and activity unchanged |
+| Client sends points or a status | Rejected: request bodies are strict and accept only `hintNumber` or `answer` |
+
+Typed answers are compared after normalisation (case, surrounding spaces, repeated spaces and wrapping
+quotes are ignored), so `"tux-4821"` matches `TUX-4821`. Multiple-choice answers are option ids.
+
+Each action runs in one SQLite transaction, and the updates carry guard conditions
+(`WHERE status = 'in_progress'`, `WHERE hints_used = ?`), so even simultaneous requests cannot award points
+twice. Code: `backend/src/services/scoring.ts`, `answerChecker.ts`, `challengeActionService.ts`.
+
+*Known trade-off:* because wrong answers are free, a multiple-choice question can be solved by guessing.
+This keeps the platform encouraging for beginners; the explanation shown afterwards is where the learning
+happens. The course is worth 1,900 points in total.
 
 ## Technology stack (installed versions)
 

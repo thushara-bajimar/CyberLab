@@ -188,7 +188,10 @@ activity_log        (id PK, user_id FK, challenge_id FK, event_type, detail, cre
 | POST | `/api/challenges/:challengeId/hints` | Reveal the next hint (`{ "hintNumber": n }` guards double clicks) |
 | POST | `/api/challenges/:challengeId/submit` | Check an answer, score it, record progress |
 | POST | `/api/terminal/execute` | Run one command in the challenge's simulated environment |
-| GET | `/api/progress` | Per-challenge progress + activity |
+| GET | `/api/progress` | Per-challenge progress + activity (Phase 6) |
+
+*Implemented in Phase 5:* the hint endpoint is `POST /api/challenges/:challengeId/hints` with
+`{ "hintNumber": n }`; both it and `/submit` return the refreshed challenge so the page updates in place.
 
 All errors use one shape: `{ "error": { "code": "...", "message": "..." } }`.
 

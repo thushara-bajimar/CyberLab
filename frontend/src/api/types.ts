@@ -119,3 +119,17 @@ export interface TerminalResponse {
   clear: boolean
   isError: boolean
 }
+
+export interface HintResponse {
+  revealed: boolean
+  challenge: ChallengeDetail
+}
+
+export interface SubmitResponse {
+  outcome: 'correct' | 'incorrect' | 'already_completed'
+  correct: boolean
+  message: string
+  pointsAwarded: number
+  attempts: number
+  challenge: ChallengeDetail
+}
