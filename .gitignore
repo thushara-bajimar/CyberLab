@@ -29,3 +29,5 @@ Thumbs.db
 # Playwright output
 test-results/
 playwright-report/
+
+docs/
