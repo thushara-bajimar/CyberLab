@@ -23,7 +23,7 @@ browser terminal, progressive hints, server-side scoring and progress tracking.
 | API | `GET /api/health`, `/api/dashboard`, `/api/modules`, `/api/modules/:moduleId`, `/api/challenges`, `/api/challenges/:challengeId`, `/api/progress`, `/api/activity?limit=&offset=`; `POST /api/challenges/:challengeId/hints`, `/api/challenges/:challengeId/submit`, `/api/terminal/execute`, `/api/progress/reset` |
 | Security of content | Answer rules, unrevealed hints and explanations of unfinished challenges are never sent to the browser (covered by tests) |
 | SQLite database | Schema v1 with foreign keys, CHECK constraints, indexes, WAL; guest learner profile; content re-seeded on start without touching progress |
-| Tests | 113 backend tests: health, errors, schema, persistence, config, scoring, dashboard, content validation, seeding, content API, terminal engine, terminal security, terminal API, answer checking, hints and submissions, progress, activity paging and reset |
+| Tests | 128 backend tests: health, errors, schema, persistence, config, scoring, dashboard, content validation, seeding, content API, terminal engine, terminal security, terminal API, answer checking, hints and submissions, progress, activity paging, reset, HTTP security (headers, CSRF, DNS rebinding, methods, injection, errors) |
 
 ## Course content
 
@@ -77,6 +77,21 @@ browser  --POST /api/terminal/execute { challengeId, command, cwd, history }--> 
 | JavaScript prototype tricks (`constructor`, `__proto__`) | Commands are looked up in a `Map`; files with `Object.hasOwn` |
 | Denial of service | Body ≤ 10 KB, command ≤ 200 characters, ≤ 20 arguments, output ≤ 400 lines; `grep` matches plain text and `find` uses a linear-time wildcard matcher instead of regular expressions |
 | Tampered requests | The working folder sent by the browser is re-validated and falls back to the home folder |
+
+### API security (all endpoints)
+
+| Threat | Protection | Code |
+|---|---|---|
+| Another website triggering actions in your browser (CSRF), e.g. a hidden form that resets progress | Every POST must be `application/json` (otherwise 415). Forms cannot send JSON, and a cross-site JSON request needs a CORS preflight, which the API never approves (no CORS headers at all) | `middleware/security.ts` `requireJson` |
+| DNS rebinding: a malicious site points its own domain at 127.0.0.1 to reach the local API | Requests whose `Host` header is not `localhost`, `127.0.0.1` or `[::1]` are refused (403); extra names via `ALLOWED_HOSTS` | `hostGuard` |
+| Content sniffing, framing, caching of personal data | `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Content-Security-Policy: default-src 'none'; frame-ancestors 'none'`, `Referrer-Policy: no-referrer`, `Cross-Origin-Resource-Policy: same-origin`, `Cache-Control: no-store` | `securityHeaders` |
+| Malformed or hostile input | zod schemas on every parameter and body; strict objects (unknown fields such as `points` or `__proto__` rejected); 10 KB body limit | `validation/` |
+| SQL injection | Only parameterised queries (`?` placeholders); tested with injection payloads | `repositories/` |
+| Information leaks in errors | One error shape; validation errors never echo values; unexpected errors return a generic 500 | `middleware/errorHandler.ts` |
+| Exposure to the network | Binds to 127.0.0.1 by default; starting with another `HOST` prints a warning | `index.ts` |
+| Vulnerable dependencies | `npm audit` reported 0 known vulnerabilities in both apps (16 Nov 2026) | — |
+
+Wrong methods on known paths return 405 with an `Allow` header; unknown paths return a JSON 404.
 
 Not covered in the MVP: rate limiting and authentication (the API is meant to run locally, bound to 127.0.0.1).
 

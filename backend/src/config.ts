@@ -7,6 +7,14 @@ export interface AppConfig {
   port: number
   host: string
   databasePath: string
+  /** Host names accepted in the Host header (DNS-rebinding protection). */
+  allowedHosts: string[]
+}
+
+const LOOPBACK_HOSTS = ['localhost', '127.0.0.1', '[::1]']
+
+export function isLoopback(host: string): boolean {
+  return ['127.0.0.1', 'localhost', '::1', '[::1]'].includes(host.toLowerCase())
 }
 
 function parsePort(value: string | undefined): number {
@@ -21,9 +29,15 @@ function parsePort(value: string | undefined): number {
 /** Reads configuration from environment variables, falling back to safe local defaults. */
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   const databasePath = env.DATABASE_PATH?.trim() || 'data/cyberlab.sqlite'
+  const host = env.HOST?.trim() || '127.0.0.1'
+  const extraHosts = (env.ALLOWED_HOSTS ?? '')
+    .split(',')
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean)
   return {
     port: parsePort(env.PORT),
-    host: env.HOST?.trim() || '127.0.0.1',
+    host,
     databasePath: databasePath === ':memory:' ? databasePath : path.resolve(BACKEND_ROOT, databasePath),
+    allowedHosts: [...new Set([...LOOPBACK_HOSTS, ...extraHosts])],
   }
 }

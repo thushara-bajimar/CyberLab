@@ -7,7 +7,8 @@ function body(code: string, message: string, details?: unknown) {
   return { error: details === undefined ? { code, message } : { code, message, details } }
 }
 
-export const apiNotFound: RequestHandler = (_req, res) => {
+/** The backend only serves the API, so every unknown path (API or not) gets the same JSON 404. */
+export const notFoundHandler: RequestHandler = (_req, res) => {
   res.status(404).json(body('NOT_FOUND', 'This API endpoint does not exist.'))
 }
 

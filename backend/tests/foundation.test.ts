@@ -118,7 +118,12 @@ describe('configuration', () => {
       port: 4000,
       host: '127.0.0.1',
       databasePath: path.resolve(BACKEND_ROOT, 'data/cyberlab.sqlite'),
+      allowedHosts: ['localhost', '127.0.0.1', '[::1]'],
     })
+  })
+
+  it('adds extra allowed host names from ALLOWED_HOSTS', () => {
+    expect(loadConfig({ ALLOWED_HOSTS: ' Lab-PC.local , localhost' }).allowedHosts).toEqual(['localhost', '127.0.0.1', '[::1]', 'lab-pc.local'])
   })
 
   it('rejects an invalid port', () => {
