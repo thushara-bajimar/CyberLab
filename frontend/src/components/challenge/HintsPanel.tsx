@@ -82,7 +82,7 @@ export function HintsPanel({ challenge, onUpdate }: { challenge: ChallengeDetail
           )}
         </div>
       )}
-      {!completed && next > hints.total && <p className="mt-3 text-xs text-slate-500">All hints revealed.</p>}
+      {!completed && next > hints.total && <p className="mt-3 text-xs text-slate-400">All hints revealed.</p>}
       {error && (
         <p className="mt-2 text-sm text-rose-400" role="alert">
           {error}

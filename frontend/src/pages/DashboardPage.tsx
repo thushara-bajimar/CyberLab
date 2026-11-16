@@ -9,6 +9,7 @@ import { ProgressBar } from '../components/ui/ProgressBar'
 import { StatCard } from '../components/ui/StatCard'
 import { EmptyState, ErrorState, LoadingState } from '../components/ui/States'
 import { useApi } from '../hooks/useApi'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 
 function Recommended({ recommended, allDone }: { recommended: DashboardResponse['recommended']; allDone: boolean }) {
   if (!recommended) {
@@ -50,6 +51,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 export function DashboardPage() {
   const dashboard = useApi(getDashboard)
+  useDocumentTitle('Dashboard')
 
   if (dashboard.status === 'loading') return <LoadingState label="Loading your dashboard…" />
   if (dashboard.status === 'error') return <ErrorState message={dashboard.error} onRetry={dashboard.reload} />

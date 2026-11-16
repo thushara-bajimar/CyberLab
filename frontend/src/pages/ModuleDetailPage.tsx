@@ -7,10 +7,12 @@ import { PageHeader } from '../components/ui/PageHeader'
 import { ProgressBar } from '../components/ui/ProgressBar'
 import { EmptyState, ErrorState, LoadingState, NotFoundState } from '../components/ui/States'
 import { useApi } from '../hooks/useApi'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 
 export function ModuleDetailPage() {
   const { moduleId = '' } = useParams()
   const module = useApi(() => getModule(moduleId), moduleId)
+  useDocumentTitle(module.status === 'success' ? module.data.title : module.notFound ? 'Module not found' : null)
 
   if (module.status === 'loading') return <LoadingState label="Loading module…" />
   if (module.status === 'error') {

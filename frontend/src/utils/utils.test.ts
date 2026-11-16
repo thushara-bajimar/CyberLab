@@ -33,6 +33,16 @@ describe('apiRequest', () => {
     expect(error).toMatchObject({ message: 'Challenge was not found.', status: 404, code: 'NOT_FOUND' })
   })
 
+  it('explains a proxy error (backend stopped) instead of showing a bare status code', async () => {
+    const original = globalThis.fetch
+    globalThis.fetch = () => Promise.resolve(new Response('', { status: 502 }))
+    try {
+      await expect(apiRequest('/api/progress')).rejects.toThrow('Cannot reach the CyberLab server. Make sure the backend is running')
+    } finally {
+      globalThis.fetch = original
+    }
+  })
+
   it('explains when the server cannot be reached', async () => {
     const original = globalThis.fetch
     globalThis.fetch = () => Promise.reject(new TypeError('Failed to fetch'))

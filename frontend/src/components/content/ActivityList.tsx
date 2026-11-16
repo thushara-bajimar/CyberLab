@@ -6,7 +6,7 @@ import { activityLabel, formatDateTime, timeAgo } from '../../utils/format'
 const icon: Record<ActivityType, { Icon: typeof CheckCircle2; color: string }> = {
   completed: { Icon: CheckCircle2, color: 'text-emerald-400' },
   hint_revealed: { Icon: Lightbulb, color: 'text-amber-300' },
-  incorrect_attempt: { Icon: XCircle, color: 'text-slate-500' },
+  incorrect_attempt: { Icon: XCircle, color: 'text-slate-400' },
 }
 
 /** Activity feed shared by the dashboard and the progress page. */
@@ -21,12 +21,13 @@ export function ActivityList({ items, showModule = false }: { items: ActivityIte
             <div>
               <p className="text-slate-200">
                 {activityLabel[item.eventType]}:{' '}
-                <Link to={`/challenges/${item.challengeId}`} className="text-emerald-300 hover:underline">
+                {/* Underlined so the link is recognisable without relying on colour (WCAG link-in-text-block). */}
+                <Link to={`/challenges/${item.challengeId}`} className="text-emerald-300 underline decoration-emerald-300/50 underline-offset-2 hover:decoration-emerald-300">
                   {item.challengeTitle}
                 </Link>
-                {showModule && <span className="text-slate-500"> · {item.moduleTitle}</span>}
+                {showModule && <span className="text-slate-400"> · {item.moduleTitle}</span>}
               </p>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-400">
                 {item.detail} ·{' '}
                 <time dateTime={item.createdAt} title={formatDateTime(item.createdAt)}>
                   {timeAgo(item.createdAt)}

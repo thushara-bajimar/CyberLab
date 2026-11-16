@@ -14,6 +14,8 @@ export class ApiError extends Error {
   }
 }
 
+const UNREACHABLE = 'Cannot reach the CyberLab server. Make sure the backend is running (cd backend; npm run dev).'
+
 export async function apiRequest<T>(path: string, init?: RequestInit): Promise<T> {
   let response: Response
   try {
@@ -26,13 +28,18 @@ export async function apiRequest<T>(path: string, init?: RequestInit): Promise<T
       },
     })
   } catch {
-    throw new ApiError('Cannot reach the CyberLab server. Make sure the backend is running.')
+    throw new ApiError(UNREACHABLE)
   }
 
   const body: unknown = await response.json().catch(() => null)
   if (!response.ok) {
     const error = (body as { error?: { code?: string; message?: string } } | null)?.error
-    throw new ApiError(error?.message ?? `Request failed (HTTP ${response.status}).`, response.status, error?.code)
+    if (error?.message) throw new ApiError(error.message, response.status, error.code)
+    // A server error without a JSON body comes from the dev proxy, not CyberLab: the backend is not reachable.
+    if (body === null && response.status >= 500) {
+      throw new ApiError(`${UNREACHABLE} (HTTP ${response.status} from the proxy.)`, response.status)
+    }
+    throw new ApiError(`Request failed (HTTP ${response.status}).`, response.status)
   }
   return body as T
 }

@@ -11,6 +11,7 @@ import { DifficultyBadge, StatusBadge } from '../components/ui/Badges'
 import { PageHeader } from '../components/ui/PageHeader'
 import { ErrorState, LoadingState, NotFoundState } from '../components/ui/States'
 import { useApi } from '../hooks/useApi'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 
 function Panel({ title, icon: Icon, children, id }: { title: string; icon: typeof Flag; children: ReactNode; id: string }) {
   return (
@@ -27,6 +28,7 @@ function Panel({ title, icon: Icon, children, id }: { title: string; icon: typeo
 export function ChallengePage() {
   const { challengeId = '' } = useParams()
   const challenge = useApi(() => getChallenge(challengeId), challengeId)
+  useDocumentTitle(challenge.status === 'success' ? challenge.data.title : challenge.notFound ? 'Challenge not found' : null)
 
   if (challenge.status === 'loading') return <LoadingState label="Loading challenge…" />
   if (challenge.status === 'error') {

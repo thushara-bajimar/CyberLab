@@ -8,7 +8,7 @@ export function StatCard({ label, value, note, icon: Icon }: { label: string; va
         <Icon className="size-4" aria-hidden="true" />
       </div>
       <p className="mt-2 text-2xl font-semibold text-slate-100">{value}</p>
-      {note && <p className="mt-1 text-xs text-slate-500">{note}</p>}
+      {note && <p className="mt-1 text-xs text-slate-400">{note}</p>}
     </article>
   )
 }

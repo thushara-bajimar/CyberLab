@@ -8,7 +8,7 @@ export function ModuleCard({ module }: { module: ModuleSummary }) {
   return (
     <article className="flex flex-col rounded-lg border border-slate-800 bg-slate-900 p-5 transition-colors hover:border-slate-700">
       <div className="flex items-center justify-between gap-2">
-        <span className="font-mono text-xs text-slate-500">Module {module.order}</span>
+        <span className="font-mono text-xs text-slate-400">Module {module.order}</span>
         <DifficultyBadge difficulty={module.difficulty} />
       </div>
       <h2 className="mt-2 text-lg font-semibold text-slate-50">

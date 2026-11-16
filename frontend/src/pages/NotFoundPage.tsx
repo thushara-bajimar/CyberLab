@@ -1,10 +1,12 @@
 import { Link, isRouteErrorResponse, useRouteError } from 'react-router-dom'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 
 /** Shown for unknown URLs (and as the router's error boundary). */
 export function NotFoundPage() {
   // As the "*" route there is no route error (useRouteError returns null); as the error boundary there is one.
   const error = useRouteError()
   const unexpected = error != null && !(isRouteErrorResponse(error) && error.status === 404)
+  useDocumentTitle(unexpected ? 'Something went wrong' : 'Page not found')
   return (
     <div className="mx-auto max-w-md py-16 text-center">
       <p className="font-mono text-emerald-400">{unexpected ? 'error' : '404'}</p>

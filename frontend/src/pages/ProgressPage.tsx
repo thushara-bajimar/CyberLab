@@ -13,6 +13,7 @@ import { StatCard } from '../components/ui/StatCard'
 import { EmptyState, ErrorState, LoadingState } from '../components/ui/States'
 import { useApi } from '../hooks/useApi'
 import { formatDateTime } from '../utils/format'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 
 const PAGE_SIZE = 20
 
@@ -53,7 +54,7 @@ function ActivityHistory({ initial, total }: { initial: ActivityItem[]; total: n
       <div className="max-h-[28rem] overflow-y-auto pr-1" tabIndex={0} aria-label="Activity entries">
         <ActivityList items={items} showModule />
       </div>
-      <div className="mt-4 flex items-center gap-3 text-xs text-slate-500">
+      <div className="mt-4 flex items-center gap-3 text-xs text-slate-400">
         <span>
           Showing {items.length} of {total}
         </span>
@@ -130,7 +131,7 @@ function ProgressContent({ data }: { data: ProgressResponse }) {
                       <Link to={`/challenges/${challenge.id}`} className="text-slate-100 hover:text-emerald-300">
                         {challenge.title}
                       </Link>
-                      <div className="mt-0.5 flex items-center gap-2 text-xs text-slate-500">
+                      <div className="mt-0.5 flex items-center gap-2 text-xs text-slate-400">
                         {challenge.moduleTitle} <DifficultyBadge difficulty={challenge.difficulty} />
                       </div>
                     </td>
@@ -158,6 +159,7 @@ export function ProgressPage() {
   const [version, setVersion] = useState(0)
   const [notice, setNotice] = useState<string | null>(null)
   const progress = useApi(getProgress, String(version))
+  useDocumentTitle('Progress')
 
   return (
     <>
@@ -170,14 +172,17 @@ export function ProgressPage() {
       {progress.status === 'loading' && <LoadingState label="Loading progress…" />}
       {progress.status === 'error' && <ErrorState message={progress.error} onRetry={progress.reload} />}
       {progress.status === 'success' && <ProgressContent key={version} data={progress.data} />}
-      <div className="mt-8">
-        <ResetProgressPanel
-          onReset={(message) => {
-            setNotice(message)
-            setVersion((value) => value + 1)
-          }}
-        />
-      </div>
+      {/* Offering a reset makes no sense while the server cannot even be reached. */}
+      {progress.status !== 'error' && (
+        <div className="mt-8">
+          <ResetProgressPanel
+            onReset={(message) => {
+              setNotice(message)
+              setVersion((value) => value + 1)
+            }}
+          />
+        </div>
+      )}
     </>
   )
 }

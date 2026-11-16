@@ -97,7 +97,7 @@ export function Terminal({ challengeId, environment }: { challengeId: string; en
     input: 'text-slate-100',
     output: 'text-slate-300',
     error: 'text-rose-400',
-    system: 'text-slate-500',
+    system: 'text-slate-400',
   }
 
   return (
@@ -144,10 +144,11 @@ export function Terminal({ challengeId, environment }: { challengeId: string; en
             autoCorrect="off"
             spellCheck={false}
             aria-busy={busy}
-            className="min-w-0 flex-1 bg-transparent text-slate-100 caret-emerald-400 outline-none"
+            // 16px on phones: smaller inputs make iOS zoom in when focused.
+            className="min-w-0 flex-1 bg-transparent text-base text-slate-100 caret-emerald-400 outline-none sm:text-[13px]"
           />
         </form>
-        {busy && <p className="text-slate-600">running…</p>}
+        {busy && <p className="text-slate-400">running…</p>}
       </div>
     </div>
   )

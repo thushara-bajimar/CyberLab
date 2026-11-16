@@ -3,9 +3,11 @@ import { ModuleCard } from '../components/content/ModuleCard'
 import { PageHeader } from '../components/ui/PageHeader'
 import { EmptyState, ErrorState, LoadingState } from '../components/ui/States'
 import { useApi } from '../hooks/useApi'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 
 export function ModulesPage() {
   const modules = useApi(getModules)
+  useDocumentTitle('Modules')
   return (
     <>
       <PageHeader

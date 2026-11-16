@@ -5,6 +5,7 @@ import { ChallengeCard } from '../components/content/ChallengeCard'
 import { PageHeader } from '../components/ui/PageHeader'
 import { EmptyState, ErrorState, LoadingState } from '../components/ui/States'
 import { useApi } from '../hooks/useApi'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 
 type Filter = 'all' | ChallengeStatus
 const filters: { id: Filter; label: string }[] = [
@@ -16,6 +17,7 @@ const filters: { id: Filter; label: string }[] = [
 
 export function ChallengesPage() {
   const challenges = useApi(getChallenges)
+  useDocumentTitle('Challenges')
   const [filter, setFilter] = useState<Filter>('all')
 
   return (

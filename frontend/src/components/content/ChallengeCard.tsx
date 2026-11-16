@@ -11,7 +11,7 @@ export function ChallengeCard({ challenge, showModule = false }: { challenge: Ch
   return (
     <article className="relative flex flex-col gap-3 rounded-lg border border-slate-800 bg-slate-900 p-4 transition-colors hover:border-slate-700 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        {showModule && <p className="text-xs text-slate-500">{challenge.moduleTitle}</p>}
+        {showModule && <p className="text-xs text-slate-400">{challenge.moduleTitle}</p>}
         <h3 className="font-medium text-slate-100">
           <Link to={`/challenges/${challenge.id}`} className="after:absolute after:inset-0 hover:text-emerald-300 focus-visible:outline-none">
             {challenge.title}

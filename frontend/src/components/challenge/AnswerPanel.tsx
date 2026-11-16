@@ -72,17 +72,17 @@ export function AnswerPanel({ challenge, onUpdate }: { challenge: ChallengeDetai
           </p>
           <dl className="grid grid-cols-3 gap-2 rounded-md bg-slate-950 p-3 text-center">
             <div>
-              <dt className="text-xs text-slate-500">Points</dt>
+              <dt className="text-xs text-slate-400">Points</dt>
               <dd className="text-lg font-semibold text-slate-100">
                 {challenge.pointsAwarded}/{challenge.basePoints}
               </dd>
             </div>
             <div>
-              <dt className="text-xs text-slate-500">Attempts</dt>
+              <dt className="text-xs text-slate-400">Attempts</dt>
               <dd className="text-lg font-semibold text-slate-100">{challenge.progress.attempts}</dd>
             </div>
             <div>
-              <dt className="text-xs text-slate-500">Hints used</dt>
+              <dt className="text-xs text-slate-400">Hints used</dt>
               <dd className="text-lg font-semibold text-slate-100">{challenge.progress.hintsUsed}</dd>
             </div>
           </dl>
@@ -105,7 +105,7 @@ export function AnswerPanel({ challenge, onUpdate }: { challenge: ChallengeDetai
                   }`}
                 >
                   <input type="radio" name="answer" value={option.id} checked={choice === option.id} onChange={() => setChoice(option.id)} className="accent-emerald-500" />
-                  <span className="font-mono text-slate-500 uppercase">{option.id}</span>
+                  <span className="font-mono text-slate-400 uppercase">{option.id}</span>
                   <span className="text-slate-200">{option.text}</span>
                 </label>
               ))}
@@ -119,7 +119,7 @@ export function AnswerPanel({ challenge, onUpdate }: { challenge: ChallengeDetai
                 maxLength={200}
                 autoComplete="off"
                 spellCheck={false}
-                className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 font-mono text-slate-100 placeholder:text-slate-600 focus:border-emerald-500 focus:outline-none"
+                className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 font-mono text-slate-100 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none"
                 placeholder="Your answer"
               />
             </label>

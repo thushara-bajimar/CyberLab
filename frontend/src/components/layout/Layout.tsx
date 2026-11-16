@@ -1,5 +1,6 @@
 import { BookOpen, LayoutDashboard, ShieldCheck, Swords, TrendingUp, type LucideIcon } from 'lucide-react'
-import { NavLink, Outlet, ScrollRestoration } from 'react-router-dom'
+import { useEffect, useRef } from 'react'
+import { NavLink, Outlet, ScrollRestoration, useLocation } from 'react-router-dom'
 import { getHealth } from '../../api/endpoints'
 import { useApi } from '../../hooks/useApi'
 
@@ -30,7 +31,24 @@ function ServerStatus() {
   )
 }
 
+/**
+ * After client-side navigation, move keyboard focus to the new page's content so keyboard and screen-reader
+ * users start reading the new page instead of staying on the link they clicked. Not done on the first load,
+ * so the "Skip to main content" link remains the first thing Tab reaches.
+ */
+function useFocusMainOnNavigation() {
+  const { pathname } = useLocation()
+  const mainRef = useRef<HTMLElement>(null)
+  const previous = useRef(pathname)
+  useEffect(() => {
+    if (previous.current !== pathname) mainRef.current?.focus({ preventScroll: true })
+    previous.current = pathname
+  }, [pathname])
+  return mainRef
+}
+
 export function Layout() {
+  const mainRef = useFocusMainOnNavigation()
   return (
     <div className="flex min-h-screen flex-col">
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:m-2 focus:rounded focus:bg-emerald-500 focus:px-3 focus:py-1 focus:text-slate-950">
@@ -68,10 +86,10 @@ export function Layout() {
           </div>
         </div>
       </header>
-      <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">
+      <main id="main" ref={mainRef} tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 focus:outline-none">
         <Outlet />
       </main>
-      <footer className="border-t border-slate-800 py-4 text-center text-xs text-slate-500">
+      <footer className="border-t border-slate-800 py-4 text-center text-xs text-slate-400">
         CyberLab · Learn Cybersecurity by Doing · All exercises run in a simulated environment
       </footer>
       <ScrollRestoration />

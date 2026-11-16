@@ -51,9 +51,9 @@ export function NotFoundState({ what, backTo, backLabel }: { what: string; backT
 export function EmptyState({ title, children }: { title: string; children?: ReactNode }) {
   return (
     <div className="flex flex-col items-center gap-2 rounded-lg border border-dashed border-slate-800 px-4 py-8 text-center">
-      <Inbox className="size-6 text-slate-500" aria-hidden="true" />
+      <Inbox className="size-6 text-slate-400" aria-hidden="true" />
       <p className="font-medium text-slate-300">{title}</p>
-      {children && <div className="max-w-md text-sm text-slate-500">{children}</div>}
+      {children && <div className="max-w-md text-sm text-slate-400">{children}</div>}
     </div>
   )
 }
