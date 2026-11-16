@@ -1,5 +1,5 @@
 /** Accessible progress bar: value / max with a label for screen readers. `fill` sets the bar colour. */
-export function ProgressBar({ value, max, label, fill = 'bg-indigo-500', track = 'bg-slate-200' }: { value: number; max: number; label: string; fill?: string; track?: string }) {
+export function ProgressBar({ value, max, label, fill = 'bg-accent', track = 'bg-track' }: { value: number; max: number; label: string; fill?: string; track?: string }) {
   const percent = max === 0 ? 0 : Math.round((value / max) * 100)
   return (
     <div

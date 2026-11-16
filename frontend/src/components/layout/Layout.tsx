@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react'
 import { NavLink, Outlet, ScrollRestoration, useLocation } from 'react-router-dom'
 import { getHealth } from '../../api/endpoints'
 import { useApi } from '../../hooks/useApi'
+import { ThemeToggle } from './ThemeToggle'
 
 interface NavItem {
   to: string
@@ -23,7 +24,7 @@ function ServerStatus() {
   const online = health.status === 'success' && health.data.database.status === 'ok'
   const label = health.status === 'loading' ? 'Checking server' : online ? 'Server online' : 'Server offline'
   const style =
-    health.status === 'loading' ? 'bg-slate-100 text-slate-700' : online ? 'bg-emerald-50 text-emerald-800' : 'bg-rose-50 text-rose-800'
+    health.status === 'loading' ? 'bg-surface-3 text-muted' : online ? 'bg-success-soft text-success-ink' : 'bg-danger-soft text-danger-ink'
   const dot = health.status === 'loading' ? 'bg-slate-400' : online ? 'bg-emerald-500' : 'bg-rose-500'
   return (
     <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${style}`} role="status" title={health.error ?? undefined}>
@@ -55,14 +56,14 @@ export function Layout() {
     <div className="flex min-h-screen flex-col">
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:z-20 focus:m-2 focus:rounded-lg focus:bg-indigo-600 focus:px-4 focus:py-2 focus:font-semibold focus:text-white"
+        className="sr-only focus:not-sr-only focus:absolute focus:z-20 focus:m-2 focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:font-semibold focus:text-white"
       >
         Skip to main content
       </a>
-      <header className="sticky top-0 z-10 border-b border-line bg-white/95 backdrop-blur">
+      <header className="sticky top-0 z-10 border-b border-line bg-surface/95 backdrop-blur">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-8 gap-y-3 px-4 py-3">
           <NavLink to="/" className="flex items-center gap-3">
-            <span className="grid size-10 place-items-center rounded-xl bg-indigo-600 text-white shadow-sm" aria-hidden="true">
+            <span className="grid size-10 place-items-center rounded-xl bg-accent text-white shadow-sm" aria-hidden="true">
               <ShieldCheck className="size-6" />
             </span>
             <span className="leading-tight">
@@ -80,7 +81,7 @@ export function Layout() {
                     end={end}
                     className={({ isActive }) =>
                       `flex flex-col items-center gap-1 rounded-xl px-1 py-2 text-xs font-semibold transition-colors sm:flex-row sm:gap-2 sm:px-3.5 sm:text-sm ${
-                        isActive ? 'bg-indigo-50 text-indigo-700' : 'text-muted hover:bg-slate-100 hover:text-ink'
+                        isActive ? 'bg-accent-soft text-accent-ink' : 'text-muted hover:bg-surface-3 hover:text-ink'
                       }`
                     }
                   >
@@ -91,15 +92,16 @@ export function Layout() {
               ))}
             </ul>
           </nav>
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-2 sm:gap-3">
             <ServerStatus />
+            <ThemeToggle />
           </div>
         </div>
       </header>
       <main id="main" ref={mainRef} tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 focus:outline-none sm:py-10">
         <Outlet />
       </main>
-      <footer className="border-t border-line bg-white py-5 text-center text-sm text-muted">
+      <footer className="border-t border-line bg-surface py-5 text-center text-sm text-muted">
         CyberLab · Learn Cybersecurity by Doing · Every exercise runs in a safe, simulated environment
       </footer>
       <ScrollRestoration />

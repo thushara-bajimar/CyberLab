@@ -29,7 +29,7 @@ export function ModuleDetailPage() {
   const data = module.data
   return (
     <>
-      <Link to="/modules" className="mb-5 inline-flex items-center gap-1 text-sm font-semibold text-indigo-700 hover:underline">
+      <Link to="/modules" className="mb-5 inline-flex items-center gap-1 text-sm font-semibold text-accent-ink hover:underline">
         <ChevronLeft className="size-4" aria-hidden="true" /> All modules
       </Link>
       <PageHeader
@@ -57,18 +57,18 @@ export function ModuleDetailPage() {
           <ul className="flex flex-col gap-3 text-ink">
             {data.objectives.map((objective) => (
               <li key={objective} className="flex gap-2.5">
-                <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-emerald-600" aria-hidden="true" />
+                <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-success-ink" aria-hidden="true" />
                 <span className="leading-relaxed">{objective}</span>
               </li>
             ))}
           </ul>
-          <div className="mt-6 rounded-xl bg-slate-50 p-4">
+          <div className="mt-6 rounded-xl bg-surface-2 p-4">
             <div className="mb-2 flex justify-between text-sm">
               <span className="font-semibold text-ink">
                 {data.completedChallenges} of {data.totalChallenges} challenges done
               </span>
               <span className="inline-flex items-center gap-1 text-muted">
-                <Trophy className="size-3.5 text-amber-600" aria-hidden="true" /> {data.pointsEarned}/{data.pointsPossible} pts
+                <Trophy className="size-3.5 text-warning-icon" aria-hidden="true" /> {data.pointsEarned}/{data.pointsPossible} pts
               </span>
             </div>
             <ProgressBar value={data.completedChallenges} max={data.totalChallenges} label={`${data.title} progress`} fill={moduleTheme(data.id).bar} />
@@ -78,7 +78,7 @@ export function ModuleDetailPage() {
 
       <section className="mt-8" aria-labelledby="challenges-heading">
         <h2 id="challenges-heading" className="mb-4 flex items-center gap-2.5 text-xl font-bold text-ink">
-          <Swords className="size-5 text-indigo-600" aria-hidden="true" /> Practise what you learned
+          <Swords className="size-5 text-accent-ink" aria-hidden="true" /> Practise what you learned
         </h2>
         {data.challenges.length === 0 ? (
           <EmptyState title="No challenges in this module yet" />

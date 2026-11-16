@@ -37,12 +37,12 @@ export function ChallengesPage() {
             onClick={() => setFilter(item.id)}
             aria-pressed={filter === item.id}
             className={`inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-semibold transition-colors ${
-              filter === item.id ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-300 bg-white text-ink hover:border-indigo-400 hover:bg-indigo-50'
+              filter === item.id ? 'border-accent bg-accent text-white' : 'border-line-strong bg-surface text-ink hover:border-accent hover:bg-accent-soft'
             }`}
           >
             {item.label}
             {challenges.status === 'success' && (
-              <span className={`rounded-full px-1.5 text-xs ${filter === item.id ? 'bg-indigo-800 text-white' : 'bg-slate-100 text-slate-700'}`}>{count(item.id)}</span>
+              <span className={`rounded-full px-1.5 text-xs ${filter === item.id ? 'bg-indigo-800 text-white' : 'bg-surface-3 text-muted'}`}>{count(item.id)}</span>
             )}
           </button>
         ))}

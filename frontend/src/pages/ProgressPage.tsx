@@ -44,7 +44,7 @@ function ActivityHistory({ initial, total }: { initial: ActivityItem[]; total: n
   return (
     <>
       {/* Long histories scroll inside the card so the page layout stays balanced. tabIndex lets keyboard users scroll it. */}
-      <div className="max-h-[28rem] overflow-y-auto pr-1" tabIndex={0} aria-label="Activity entries">
+      <div className="max-h-112 overflow-y-auto pr-1" tabIndex={0} aria-label="Activity entries">
         <ActivityList items={items} showModule />
       </div>
       <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-muted">
@@ -56,7 +56,7 @@ function ActivityHistory({ initial, total }: { initial: ActivityItem[]; total: n
             {busy && <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />} Load older activity
           </button>
         )}
-        {error && <span className="font-medium text-rose-800">{error}</span>}
+        {error && <span className="font-medium text-danger-ink">{error}</span>}
       </div>
     </>
   )
@@ -83,7 +83,7 @@ function ProgressContent({ data }: { data: ProgressResponse }) {
                 <div className="min-w-0 flex-1">
                   <div className="mb-1.5 flex flex-wrap items-center justify-between gap-2 text-sm">
                     <span className="flex items-center gap-2">
-                      <Link to={`/modules/${module.id}`} className="font-semibold text-ink hover:text-indigo-700 hover:underline">
+                      <Link to={`/modules/${module.id}`} className="font-semibold text-ink hover:text-accent-ink hover:underline">
                         {module.title}
                       </Link>
                       <StatusBadge status={module.status} />
@@ -107,7 +107,7 @@ function ProgressContent({ data }: { data: ProgressResponse }) {
       <Card title="Challenges" icon={ListChecks} tone="sky" id="challenges-heading" className="mt-6">
         <div className="overflow-x-auto">
           <table className="w-full min-w-180 text-left text-sm">
-            <thead className="bg-slate-50 text-xs font-semibold text-muted uppercase">
+            <thead className="bg-surface-2 text-xs font-semibold text-muted uppercase">
               <tr>
                 <th scope="col" className="rounded-l-lg px-3 py-2.5">Challenge</th>
                 <th scope="col" className="px-3 py-2.5">Status</th>
@@ -119,9 +119,9 @@ function ProgressContent({ data }: { data: ProgressResponse }) {
             </thead>
             <tbody className="divide-y divide-line">
               {data.challenges.map((challenge) => (
-                <tr key={challenge.id} className="hover:bg-slate-50">
+                <tr key={challenge.id} className="hover:bg-surface-2">
                   <td className="px-3 py-3">
-                    <Link to={`/challenges/${challenge.id}`} className="font-semibold text-ink hover:text-indigo-700 hover:underline">
+                    <Link to={`/challenges/${challenge.id}`} className="font-semibold text-ink hover:text-accent-ink hover:underline">
                       {challenge.title}
                     </Link>
                     <div className="mt-1 flex items-center gap-2 text-xs text-muted">
@@ -157,7 +157,7 @@ export function ProgressPage() {
     <>
       <PageHeader eyebrow="Progress" title="Your learning progress" description="Everything you have done in CyberLab so far: what you completed, how many hints you used and your full activity history." />
       {notice && (
-        <p className="mb-6 flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-medium text-emerald-900" role="status">
+        <p className="mb-6 flex items-center gap-2 rounded-xl border border-success-line bg-success-soft p-4 text-sm font-medium text-success-ink" role="status">
           <CheckCircle2 className="size-5" aria-hidden="true" /> {notice}
         </p>
       )}

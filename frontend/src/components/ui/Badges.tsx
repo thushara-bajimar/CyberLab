@@ -3,9 +3,9 @@ import type { ChallengeStatus, Difficulty } from '../../api/types'
 import { difficultyLabel, statusLabel } from '../../utils/format'
 
 const difficultyStyle: Record<Difficulty, string> = {
-  beginner: 'bg-emerald-50 text-emerald-800 ring-emerald-200',
-  intermediate: 'bg-amber-50 text-amber-900 ring-amber-200',
-  advanced: 'bg-rose-50 text-rose-800 ring-rose-200',
+  beginner: 'bg-success-soft text-success-ink ring-success-line',
+  intermediate: 'bg-warning-soft text-warning-ink ring-warning-line',
+  advanced: 'bg-danger-soft text-danger-ink ring-danger-line',
 }
 
 export function DifficultyBadge({ difficulty }: { difficulty: Difficulty }) {
@@ -17,9 +17,9 @@ export function DifficultyBadge({ difficulty }: { difficulty: Difficulty }) {
 }
 
 const statusStyle: Record<ChallengeStatus, string> = {
-  not_started: 'bg-slate-100 text-slate-700',
-  in_progress: 'bg-sky-50 text-sky-800',
-  completed: 'bg-emerald-50 text-emerald-800',
+  not_started: 'bg-surface-3 text-muted',
+  in_progress: 'bg-info-soft text-info-ink',
+  completed: 'bg-success-soft text-success-ink',
 }
 
 const statusIcon: Record<ChallengeStatus, typeof Circle> = {

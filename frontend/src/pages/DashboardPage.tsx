@@ -26,16 +26,16 @@ function encouragement(completed: number, total: number): string {
 function UpNext({ recommended, allDone }: { recommended: DashboardResponse['recommended']; allDone: boolean }) {
   if (!recommended) {
     return (
-      <div className="flex flex-col items-center gap-2 rounded-2xl bg-white p-6 text-center text-ink shadow-lg">
-        <PartyPopper className="size-8 text-indigo-600" aria-hidden="true" />
+      <div className="flex flex-col items-center gap-2 rounded-2xl bg-surface p-6 text-center text-ink shadow-lg">
+        <PartyPopper className="size-8 text-accent-ink" aria-hidden="true" />
         <p className="font-semibold">{allDone ? 'Every challenge is complete' : 'No challenge to recommend yet'}</p>
         <p className="text-sm text-muted">{allDone ? 'Review any challenge to revisit its explanation.' : 'Challenges appear once course content is loaded.'}</p>
       </div>
     )
   }
   return (
-    <div className="rounded-2xl bg-white p-5 text-ink shadow-lg sm:p-6">
-      <p className="text-sm font-semibold text-indigo-700">{recommended.reason === 'continue' ? 'Pick up where you left off' : 'Up next'}</p>
+    <div className="rounded-2xl bg-surface p-5 text-ink shadow-lg sm:p-6">
+      <p className="text-sm font-semibold text-accent-ink">{recommended.reason === 'continue' ? 'Pick up where you left off' : 'Up next'}</p>
       <div className="mt-3 flex items-start gap-3">
         <ModuleIcon moduleId={recommended.moduleId} />
         <div>
@@ -47,7 +47,7 @@ function UpNext({ recommended, allDone }: { recommended: DashboardResponse['reco
         </div>
       </div>
       <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-        <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-amber-800">
+        <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-warning-ink">
           <Trophy className="size-4" aria-hidden="true" /> {recommended.points} points available
         </span>
         <Link to={`/challenges/${recommended.challengeId}`} className={primaryButton}>
@@ -68,7 +68,7 @@ export function DashboardPage() {
   const { learner, totals, modules, recentActivity, recommended } = dashboard.data
   return (
     <>
-      <section className="overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 to-violet-700 p-6 text-white shadow-md sm:p-8" aria-labelledby="welcome-heading">
+      <section className="overflow-hidden rounded-3xl bg-linear-to-br from-indigo-600 to-violet-700 p-6 text-white shadow-md sm:p-8 dark:from-indigo-700 dark:to-violet-900" aria-labelledby="welcome-heading">
         <div className="grid items-center gap-6 lg:grid-cols-5">
           <div className="lg:col-span-3">
             <p className="text-sm font-semibold text-indigo-100">Dashboard</p>
@@ -101,7 +101,7 @@ export function DashboardPage() {
 
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
         <Card title="Your learning path" icon={MapIcon} id="path-heading" className="lg:col-span-2" action={
-          <Link to="/modules" className="text-sm font-semibold text-indigo-700 hover:underline">All modules</Link>
+          <Link to="/modules" className="text-sm font-semibold text-accent-ink hover:underline">All modules</Link>
         }>
           {modules.length === 0 ? (
             <EmptyState title="No modules yet">Modules appear here once course content is loaded.</EmptyState>
@@ -109,7 +109,7 @@ export function DashboardPage() {
             <ol className="flex flex-col gap-3">
               {modules.map((module) => (
                 <li key={module.id}>
-                  <Link to={`/modules/${module.id}`} className="flex items-center gap-4 rounded-xl p-2 transition-colors hover:bg-slate-50">
+                  <Link to={`/modules/${module.id}`} className="flex items-center gap-4 rounded-xl p-2 transition-colors hover:bg-surface-2">
                     <ModuleIcon moduleId={module.id} size="sm" />
                     <div className="min-w-0 flex-1">
                       <div className="mb-1.5 flex items-center justify-between gap-2 text-sm">
@@ -133,7 +133,7 @@ export function DashboardPage() {
           ) : (
             <>
               <ActivityList items={recentActivity} />
-              <Link to="/progress" className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-indigo-700 hover:underline">
+              <Link to="/progress" className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-accent-ink hover:underline">
                 View full progress <ArrowRight className="size-4" aria-hidden="true" />
               </Link>
             </>

@@ -290,7 +290,9 @@ CyberLab/
 | 6 | `9751841` | Progress page, activity history, reset | Reset added at the user's request |
 | 7–8 | `2ffe68c`, `12811b3` | API hardening (headers, CSRF, DNS rebinding, 405), frontend component and e2e tests | Phases 7 and 8 combined; 404-page bug found and fixed |
 | 9 | `2df6036` | Accessibility (axe-core), contrast fixes, page titles, focus management, offline messages | — |
-| 10 | this commit | Final README, plan update, repository check | — |
+| 10 | `3193f63` | Final README, plan update, repository check | — |
+| Redesign | `344926c` | Learner-friendly visual redesign (module colours and icons, friendlier wording) | At the user's request |
+| Dark mode | this commit | Colour tokens, Light / Dark / System toggle, no-flash startup, accessibility tests in both themes | At the user's request |
 
 ## 17. Testing strategy
 

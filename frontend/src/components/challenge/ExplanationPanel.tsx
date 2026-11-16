@@ -3,12 +3,12 @@ import type { ReactNode } from 'react'
 import type { Explanation } from '../../api/types'
 
 const blockTones = {
-  emerald: 'bg-emerald-100 text-emerald-700',
-  indigo: 'bg-indigo-100 text-indigo-700',
-  violet: 'bg-violet-100 text-violet-700',
-  slate: 'bg-slate-200 text-slate-800',
-  amber: 'bg-amber-100 text-amber-800',
-  sky: 'bg-sky-100 text-sky-700',
+  emerald: 'bg-success-tile text-success-ink',
+  indigo: 'bg-accent-tile text-accent-ink',
+  violet: 'bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-300',
+  slate: 'bg-track text-ink',
+  amber: 'bg-warning-tile text-warning-ink',
+  sky: 'bg-info-tile text-info-ink',
 }
 
 function Block({ icon: Icon, title, tone, children }: { icon: typeof BookOpen; title: string; tone: keyof typeof blockTones; children: ReactNode }) {
@@ -28,8 +28,8 @@ function Block({ icon: Icon, title, tone, children }: { icon: typeof BookOpen; t
 /** Shown only after completion: the full worked solution. */
 export function ExplanationPanel({ explanation }: { explanation: Explanation }) {
   return (
-    <section className="overflow-hidden rounded-2xl border border-emerald-200 bg-white shadow-sm" aria-labelledby="explanation-heading">
-      <div className="flex items-center gap-3 bg-emerald-50 px-5 py-4 sm:px-6">
+    <section className="overflow-hidden rounded-2xl border border-success-line bg-surface shadow-sm" aria-labelledby="explanation-heading">
+      <div className="flex items-center gap-3 bg-success-soft px-5 py-4 sm:px-6">
         <span className="grid size-10 place-items-center rounded-xl bg-emerald-600 text-white" aria-hidden="true">
           <GraduationCap className="size-5" />
         </span>
@@ -37,7 +37,7 @@ export function ExplanationPanel({ explanation }: { explanation: Explanation }) 
           <h2 id="explanation-heading" className="text-lg font-bold text-ink">
             Solution explained
           </h2>
-          <p className="text-sm text-emerald-900">Here is what this challenge was teaching you.</p>
+          <p className="text-sm text-success-ink">Here is what this challenge was teaching you.</p>
         </div>
       </div>
       <div className="flex flex-col gap-5 p-5 sm:p-6">

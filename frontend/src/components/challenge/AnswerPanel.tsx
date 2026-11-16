@@ -10,10 +10,10 @@ import { primaryButton, textInput } from '../../utils/styles'
 type Feedback = { tone: 'success' | 'retry' | 'info' | 'error'; message: string }
 
 const toneStyle: Record<Feedback['tone'], { box: string; Icon: typeof CheckCircle2 }> = {
-  success: { box: 'border-emerald-200 bg-emerald-50 text-emerald-900', Icon: CheckCircle2 },
-  retry: { box: 'border-amber-200 bg-amber-50 text-amber-900', Icon: RotateCcw },
-  info: { box: 'border-sky-200 bg-sky-50 text-sky-900', Icon: Info },
-  error: { box: 'border-rose-200 bg-rose-50 text-rose-900', Icon: XCircle },
+  success: { box: 'border-success-line bg-success-soft text-success-ink', Icon: CheckCircle2 },
+  retry: { box: 'border-warning-line bg-warning-soft text-warning-ink', Icon: RotateCcw },
+  info: { box: 'border-info-line bg-info-soft text-info-ink', Icon: Info },
+  error: { box: 'border-danger-line bg-danger-soft text-danger-ink', Icon: XCircle },
 }
 
 function feedbackFor(result: SubmitResponse): Feedback {
@@ -62,7 +62,7 @@ export function AnswerPanel({ challenge, onUpdate }: { challenge: ChallengeDetai
   return (
     <section className="rounded-2xl border border-line bg-surface p-5 shadow-sm sm:p-6" aria-labelledby="answer-heading">
       <h2 id="answer-heading" className="mb-4 flex items-center gap-2.5 text-base font-semibold text-ink">
-        <span className="grid size-8 place-items-center rounded-lg bg-indigo-100 text-indigo-700" aria-hidden="true">
+        <span className="grid size-8 place-items-center rounded-lg bg-accent-tile text-accent-ink" aria-hidden="true">
           <KeyRound className="size-4" />
         </span>
         Your answer
@@ -71,22 +71,22 @@ export function AnswerPanel({ challenge, onUpdate }: { challenge: ChallengeDetai
 
       {completed ? (
         <div className="flex flex-col gap-4 text-sm">
-          <p className="flex items-center gap-2 font-semibold text-emerald-800">
+          <p className="flex items-center gap-2 font-semibold text-success-ink">
             <CheckCircle2 className="size-5" aria-hidden="true" />
             Completed{challenge.progress.completedAt ? ` on ${formatDateTime(challenge.progress.completedAt)}` : ''}.
           </p>
           <dl className="grid grid-cols-3 gap-3 text-center">
-            <div className="rounded-xl bg-amber-50 p-3">
-              <dt className="text-xs font-medium text-amber-900">Points</dt>
+            <div className="rounded-xl bg-warning-soft p-3">
+              <dt className="text-xs font-medium text-warning-ink">Points</dt>
               <dd className="mt-0.5 text-xl font-bold text-ink">
                 {challenge.pointsAwarded}/{challenge.basePoints}
               </dd>
             </div>
-            <div className="rounded-xl bg-slate-50 p-3">
+            <div className="rounded-xl bg-surface-2 p-3">
               <dt className="text-xs font-medium text-muted">Attempts</dt>
               <dd className="mt-0.5 text-xl font-bold text-ink">{challenge.progress.attempts}</dd>
             </div>
-            <div className="rounded-xl bg-slate-50 p-3">
+            <div className="rounded-xl bg-surface-2 p-3">
               <dt className="text-xs font-medium text-muted">Hints used</dt>
               <dd className="mt-0.5 text-xl font-bold text-ink">{challenge.progress.hintsUsed}</dd>
             </div>
@@ -108,13 +108,13 @@ export function AnswerPanel({ challenge, onUpdate }: { challenge: ChallengeDetai
                   <label
                     key={option.id}
                     className={`flex cursor-pointer items-center gap-3 rounded-xl border-2 p-3.5 transition-colors ${
-                      selected ? 'border-indigo-500 bg-indigo-50' : 'border-line bg-white hover:border-indigo-300 hover:bg-slate-50'
+                      selected ? 'border-accent bg-accent-soft' : 'border-line bg-surface hover:border-accent-line hover:bg-surface-2'
                     }`}
                   >
                     <input type="radio" name="answer" value={option.id} checked={selected} onChange={() => setChoice(option.id)} className="size-4 shrink-0 accent-indigo-600" />
                     <span
                       className={`grid size-8 shrink-0 place-items-center rounded-full text-sm font-bold uppercase ${
-                        selected ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-700'
+                        selected ? 'bg-accent text-white' : 'bg-surface-3 text-muted'
                       }`}
                       aria-hidden="true"
                     >
@@ -146,7 +146,7 @@ export function AnswerPanel({ challenge, onUpdate }: { challenge: ChallengeDetai
             </button>
             {challenge.scoring.pointsAvailable !== null && (
               <span className="inline-flex items-center gap-1.5 text-sm text-muted">
-                <Trophy className="size-4 text-amber-600" aria-hidden="true" />
+                <Trophy className="size-4 text-warning-icon" aria-hidden="true" />
                 Worth {challenge.scoring.pointsAvailable} points now · wrong answers cost nothing
               </span>
             )}

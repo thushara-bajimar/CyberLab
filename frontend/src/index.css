@@ -3,25 +3,117 @@
 /*
  * CyberLab design tokens.
  *
- * A bright, friendly learning theme: white cards on a soft background, dark readable text, and one accent
- * colour (indigo) for actions. Status colours are used consistently: green = success / completed,
- * amber = hints, red = danger. The terminal keeps a dark look on purpose, because real terminals look like that.
- * All text colour pairs meet WCAG AA contrast (checked automatically by the axe-core e2e tests).
+ * Components use colours by ROLE (surface, ink, accent, success-soft, ...) instead of raw palette names. Each role
+ * is defined twice below: once for the light theme and once for the dark theme (the `.dark` class on <html>).
+ * Switching theme therefore only swaps token values; every component follows automatically.
+ *
+ * Roles: canvas = page background, surface = cards, surface-2/3 = subtle panels and chips, line = borders,
+ * track = progress-bar track, ink = main text, muted = secondary text, faint = decorative icons;
+ * accent = the single action colour (buttons, links); success / warning / danger / info = status colours, each
+ * with -soft (tinted background), -tile (icon tile), -line (border) and -ink (text) shades.
+ * The terminal and code snippets are always dark (like real terminals) and use fixed colours.
+ * All text pairs meet WCAG AA contrast in both themes (checked by the axe-core e2e tests).
  */
+
+/* `dark:` utilities apply when an ancestor has the .dark class (set by src/utils/theme.ts). */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   /* System font stacks only: no web fonts are downloaded. */
   --font-sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, "Cascadia Code", Consolas, "Courier New", monospace;
 
-  --color-canvas: #f4f6fb; /* page background */
-  --color-surface: #ffffff; /* cards */
-  --color-line: #e3e7f0; /* card borders and dividers */
-  --color-ink: #1b2035; /* main text */
-  --color-muted: #4a5068; /* secondary text (7:1 on white) */
+  /* Light theme (default) */
+  --color-canvas: #f4f6fb;
+  --color-surface: #ffffff;
+  --color-surface-2: #f8fafc;
+  --color-surface-3: #f1f5f9;
+  --color-line: #e3e7f0;
+  --color-line-strong: #cbd5e1;
+  --color-track: #e2e8f0;
+  --color-ink: #1b2035;
+  --color-muted: #4a5068;
+  --color-faint: #64748b;
+
+  --color-accent: #4f46e5;
+  --color-accent-strong: #4338ca;
+  --color-accent-ink: #4338ca;
+  --color-accent-soft: #eef2ff;
+  --color-accent-tile: #e0e7ff;
+  --color-accent-line: #c7d2fe;
+
+  --color-success-soft: #ecfdf5;
+  --color-success-tile: #d1fae5;
+  --color-success-line: #a7f3d0;
+  --color-success-ink: #065f46;
+
+  --color-warning-soft: #fffbeb;
+  --color-warning-tile: #fef3c7;
+  --color-warning-line: #fde68a;
+  --color-warning-ink: #92400e;
+  --color-warning-icon: #d97706;
+
+  --color-danger-soft: #fff1f2;
+  --color-danger-tile: #ffe4e6;
+  --color-danger-line: #fecdd3;
+  --color-danger-ink: #9f1239;
+
+  --color-info-soft: #f0f9ff;
+  --color-info-tile: #e0f2fe;
+  --color-info-line: #bae6fd;
+  --color-info-ink: #075985;
+}
+
+/* Dark theme: same roles, values tuned for a dark background. */
+.dark {
+  --color-canvas: #0d111c;
+  --color-surface: #161b2b;
+  --color-surface-2: #1c2235;
+  --color-surface-3: #242b41;
+  --color-line: #2a3249;
+  --color-line-strong: #3b4562;
+  --color-track: #2a3249;
+  --color-ink: #e8ebf4;
+  --color-muted: #b3b9cb;
+  --color-faint: #8a93ab;
+
+  --color-accent: #4f46e5;
+  /* Hover stays darker even in dark mode: white text on the lighter #6366f1 is only 4.47:1 (below AA). */
+  --color-accent-strong: #4338ca;
+  --color-accent-ink: #a5b4fc;
+  --color-accent-soft: #1d2045;
+  --color-accent-tile: #272b5c;
+  --color-accent-line: #3d4290;
+
+  --color-success-soft: #0f2a24;
+  --color-success-tile: #12392f;
+  --color-success-line: #1f5a48;
+  --color-success-ink: #6ee7b7;
+
+  --color-warning-soft: #271f0f;
+  --color-warning-tile: #382a0f;
+  --color-warning-line: #6b4f12;
+  --color-warning-ink: #fcd34d;
+  --color-warning-icon: #fbbf24;
+
+  --color-danger-soft: #2b1520;
+  --color-danger-tile: #3d1a27;
+  --color-danger-line: #6b2337;
+  --color-danger-ink: #fda4af;
+
+  --color-info-soft: #0f2233;
+  --color-info-tile: #12324a;
+  --color-info-line: #1e4e70;
+  --color-info-ink: #7dd3fc;
 }
 
 html {
   color-scheme: light;
+}
+
+html.dark {
+  /* Native form controls and scrollbars follow the theme too. */
+  color-scheme: dark;
 }
 
 body {
@@ -36,7 +128,7 @@ body {
 }
 
 ::selection {
-  background: var(--color-indigo-100);
+  background: var(--color-accent-tile);
   color: var(--color-ink);
 }
 

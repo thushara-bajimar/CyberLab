@@ -34,9 +34,9 @@ export function HintsPanel({ challenge, onUpdate }: { challenge: ChallengeDetail
   }
 
   return (
-    <section className="rounded-2xl border border-amber-200 bg-amber-50/60 p-5 shadow-sm sm:p-6" aria-labelledby="hints-heading">
+    <section className="rounded-2xl border border-warning-line bg-warning-soft p-5 shadow-sm sm:p-6" aria-labelledby="hints-heading">
       <h2 id="hints-heading" className="flex items-center gap-2.5 text-base font-semibold text-ink">
-        <span className="grid size-8 place-items-center rounded-lg bg-amber-100 text-amber-800" aria-hidden="true">
+        <span className="grid size-8 place-items-center rounded-lg bg-warning-tile text-warning-ink" aria-hidden="true">
           <Lightbulb className="size-4" />
         </span>
         Need a hint?
@@ -50,8 +50,8 @@ export function HintsPanel({ challenge, onUpdate }: { challenge: ChallengeDetail
       {hints.revealed.length > 0 && (
         <ol className="mt-4 flex flex-col gap-2.5" aria-live="polite">
           {hints.revealed.map((hint) => (
-            <li key={hint.number} className="rounded-xl border border-amber-200 bg-white p-3.5 text-sm leading-relaxed text-ink">
-              <span className="mb-1 block text-xs font-bold tracking-wide text-amber-800 uppercase">Hint {hint.number}</span>
+            <li key={hint.number} className="rounded-xl border border-warning-line bg-surface p-3.5 text-sm leading-relaxed text-ink">
+              <span className="mb-1 block text-xs font-bold tracking-wide text-warning-ink uppercase">Hint {hint.number}</span>
               {hint.text}
             </li>
           ))}
@@ -61,7 +61,7 @@ export function HintsPanel({ challenge, onUpdate }: { challenge: ChallengeDetail
       {!completed && next <= hints.total && (
         <div className="mt-4">
           {confirming ? (
-            <div className="rounded-xl border border-amber-300 bg-white p-4 text-sm" role="alertdialog" aria-label="Confirm hint">
+            <div className="rounded-xl border border-warning-line bg-surface p-4 text-sm" role="alertdialog" aria-label="Confirm hint">
               <p className="text-ink">
                 Reveal hint {next}? This challenge will then be worth <strong>{available - cost}</strong> points instead of {available}.
               </p>
@@ -80,8 +80,8 @@ export function HintsPanel({ challenge, onUpdate }: { challenge: ChallengeDetail
               </div>
             </div>
           ) : (
-            <button type="button" onClick={() => setConfirming(true)} className={`${secondaryButton} border-amber-300 hover:border-amber-500 hover:bg-amber-100`}>
-              <Lightbulb className="size-4 text-amber-700" aria-hidden="true" />
+            <button type="button" onClick={() => setConfirming(true)} className={`${secondaryButton} border-warning-line hover:border-amber-500 hover:bg-warning-tile`}>
+              <Lightbulb className="size-4 text-warning-ink" aria-hidden="true" />
               Reveal hint {next} of {hints.total} (-{cost} points)
             </button>
           )}
@@ -89,7 +89,7 @@ export function HintsPanel({ challenge, onUpdate }: { challenge: ChallengeDetail
       )}
       {!completed && next > hints.total && <p className="mt-4 text-sm text-muted">All hints revealed. You have everything you need!</p>}
       {error && (
-        <p className="mt-3 text-sm font-medium text-rose-800" role="alert">
+        <p className="mt-3 text-sm font-medium text-danger-ink" role="alert">
           {error}
         </p>
       )}

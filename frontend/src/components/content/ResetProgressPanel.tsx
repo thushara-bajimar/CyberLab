@@ -35,21 +35,21 @@ export function ResetProgressPanel({ onReset }: { onReset: (message: string) => 
   }
 
   return (
-    <section className="rounded-2xl border border-rose-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="reset-heading">
+    <section className="rounded-2xl border border-danger-line bg-surface p-5 shadow-sm sm:p-6" aria-labelledby="reset-heading">
       <h2 id="reset-heading" className="flex items-center gap-2.5 text-base font-semibold text-ink">
-        <span className="grid size-8 place-items-center rounded-lg bg-rose-100 text-rose-700" aria-hidden="true">
+        <span className="grid size-8 place-items-center rounded-lg bg-danger-tile text-danger-ink" aria-hidden="true">
           <RotateCcw className="size-4" />
         </span>
         Start over
       </h2>
       <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted">
         Deletes your points, completed challenges, revealed hints, attempts and activity history so you can start the course again (for example
-        before a demonstration). The course content is not changed. <strong className="text-rose-800">This cannot be undone.</strong>
+        before a demonstration). The course content is not changed. <strong className="text-danger-ink">This cannot be undone.</strong>
       </p>
       <form onSubmit={submit} className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end">
         <label className="flex flex-col gap-1.5 text-sm font-medium text-ink">
           <span>
-            Type <span className="rounded bg-rose-50 px-1.5 py-0.5 font-mono font-semibold text-rose-800">{CONFIRM_WORD}</span> to confirm
+            Type <span className="rounded bg-danger-soft px-1.5 py-0.5 font-mono font-semibold text-danger-ink">{CONFIRM_WORD}</span> to confirm
           </span>
           <input value={confirmText} onChange={(event) => setConfirmText(event.target.value)} autoComplete="off" spellCheck={false} className={`${textInput} font-mono sm:w-56`} />
         </label>
@@ -63,7 +63,7 @@ export function ResetProgressPanel({ onReset }: { onReset: (message: string) => 
         </button>
       </form>
       {error && (
-        <p className="mt-3 text-sm font-medium text-rose-800" role="alert">
+        <p className="mt-3 text-sm font-medium text-danger-ink" role="alert">
           {error}
         </p>
       )}

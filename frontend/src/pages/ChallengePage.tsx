@@ -43,11 +43,11 @@ function ChallengeView({ initial }: { initial: ChallengeDetail }) {
   return (
     <>
       <nav aria-label="Breadcrumb" className="mb-5 flex flex-wrap items-center gap-1 text-sm font-medium text-muted">
-        <Link to="/modules" className="text-indigo-700 hover:underline">
+        <Link to="/modules" className="text-accent-ink hover:underline">
           Modules
         </Link>
         <ChevronRight className="size-4" aria-hidden="true" />
-        <Link to={`/modules/${data.moduleId}`} className="text-indigo-700 hover:underline">
+        <Link to={`/modules/${data.moduleId}`} className="text-accent-ink hover:underline">
           {data.moduleTitle}
         </Link>
       </nav>
@@ -59,7 +59,7 @@ function ChallengeView({ initial }: { initial: ChallengeDetail }) {
           <div className="flex flex-wrap items-center gap-2 text-sm">
             <DifficultyBadge difficulty={data.difficulty} />
             <StatusBadge status={data.status} />
-            <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-900 ring-1 ring-amber-200 ring-inset">
+            <span className="inline-flex items-center gap-1 rounded-full bg-warning-soft px-2.5 py-0.5 text-xs font-semibold text-warning-ink ring-1 ring-warning-line ring-inset">
               <Trophy className="size-3.5" aria-hidden="true" />
               {data.status === 'completed' ? `${data.pointsAwarded}/${data.basePoints} pts earned` : `${data.scoring.pointsAvailable ?? data.basePoints} pts available`}
             </span>
@@ -71,8 +71,8 @@ function ChallengeView({ initial }: { initial: ChallengeDetail }) {
         <div className="flex min-w-0 flex-col gap-6 lg:col-span-3">
           <Card title="Your mission" icon={Flag} id="scenario-heading">
             <p className="text-lg leading-relaxed text-ink">{data.scenario}</p>
-            <div className="mt-5 flex gap-3 rounded-xl border border-indigo-200 bg-indigo-50 p-4">
-              <Target className="mt-0.5 size-5 shrink-0 text-indigo-700" aria-hidden="true" />
+            <div className="mt-5 flex gap-3 rounded-xl border border-accent-line bg-accent-soft p-4">
+              <Target className="mt-0.5 size-5 shrink-0 text-accent-ink" aria-hidden="true" />
               <p className="text-ink">
                 <strong className="font-semibold">Your goal: </strong>
                 {data.objective}
@@ -97,7 +97,7 @@ function ChallengeView({ initial }: { initial: ChallengeDetail }) {
             <ol className="flex flex-col gap-3">
               {data.instructions.map((step, index) => (
                 <li key={step} className="flex gap-3 text-sm leading-relaxed text-ink">
-                  <span className="grid size-6 shrink-0 place-items-center rounded-full bg-sky-100 text-xs font-bold text-sky-800" aria-hidden="true">
+                  <span className="grid size-6 shrink-0 place-items-center rounded-full bg-info-tile text-xs font-bold text-info-ink" aria-hidden="true">
                     {index + 1}
                   </span>
                   <span>{step}</span>
@@ -108,7 +108,7 @@ function ChallengeView({ initial }: { initial: ChallengeDetail }) {
           <Card title="Key concepts" icon={BookOpen} tone="emerald" id="resources-heading">
             <dl className="flex flex-col gap-3">
               {data.resources.map((resource) => (
-                <div key={resource.title} className="rounded-xl bg-slate-50 p-3.5">
+                <div key={resource.title} className="rounded-xl bg-surface-2 p-3.5">
                   <dt className="font-semibold text-ink">{resource.title}</dt>
                   <dd className="mt-0.5 text-sm leading-relaxed text-muted">{resource.body}</dd>
                 </div>

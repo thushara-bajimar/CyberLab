@@ -1,9 +1,10 @@
 import AxeBuilder from '@axe-core/playwright'
-import { expect, test } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
 
 /**
  * Automated accessibility check with axe-core against WCAG 2.1 levels A and AA (contrast, labels, landmarks,
- * headings, ARIA usage, ...). Automated rules catch many but not all problems; keyboard use is checked below.
+ * headings, ARIA usage, ...), in BOTH the light and the dark theme. Automated rules catch many but not all
+ * problems; keyboard use is checked below.
  */
 // The specs share one in-memory database: leave a fresh course behind after every test in this file.
 test.afterEach(async ({ request }) => {
@@ -11,45 +12,66 @@ test.afterEach(async ({ request }) => {
   expect(response.ok()).toBe(true)
 })
 
-const PAGES = ['/','/modules', '/modules/linux-basics', '/challenges', '/challenges/linux-hidden-files', '/challenges/fundamentals-cia-triad', '/progress', '/no-such-page']
+const PAGES = ['/', '/modules', '/modules/linux-basics', '/challenges', '/challenges/linux-hidden-files', '/challenges/fundamentals-cia-triad', '/progress', '/no-such-page']
 
-for (const path of PAGES) {
-  test(`${path} has no detectable WCAG 2.1 A/AA violations`, async ({ page }) => {
-    await page.goto(path)
-    await expect(page.getByRole('main')).toBeVisible()
-    await page.waitForLoadState('networkidle')
-    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
-    const summary = results.violations.map((violation) => `${violation.id} (${violation.impact}): ${violation.nodes.length} element(s) - ${violation.help}`)
-    expect(summary).toEqual([])
+async function expectNoViolations(page: Page, label: string) {
+  const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
+  expect(results.violations.map((violation) => `${label}: ${violation.id} (${violation.impact}) ${violation.nodes.length} element(s) - ${violation.help}`)).toEqual([])
+}
+
+/** The app follows the system theme by default, so emulating the browser's colour scheme selects the theme. */
+for (const theme of ['light', 'dark'] as const) {
+  test.describe(`${theme} theme`, () => {
+    test.use({ colorScheme: theme })
+
+    for (const path of PAGES) {
+      test(`${path} has no detectable WCAG 2.1 A/AA violations`, async ({ page }) => {
+        await page.goto(path)
+        await expect(page.getByRole('main')).toBeVisible()
+        // Make sure the intended theme is really active before scanning.
+        expect(await page.evaluate(() => document.documentElement.classList.contains('dark'))).toBe(theme === 'dark')
+        await page.waitForLoadState('networkidle')
+        await expectNoViolations(page, path)
+      })
+    }
+
+    test('states created by learning (hints, feedback, explanation, activity, reset notice) are accessible too', async ({ page }) => {
+      await page.goto('/challenges/linux-hidden-files')
+      await page.getByRole('button', { name: /Reveal hint 1 of 3/ }).click()
+      await expectNoViolations(page, 'hint confirmation')
+      await page.getByRole('button', { name: 'Reveal hint 1', exact: true }).click()
+      await page.getByLabel('Type your answer').fill('wrong')
+      await page.getByRole('button', { name: 'Submit answer' }).click()
+      await expect(page.getByText(/Not quite/)).toBeVisible()
+      await expectNoViolations(page, 'revealed hint and wrong-answer feedback')
+      await page.getByLabel('Type your answer').fill('Pa55-Lab-Only')
+      await page.getByRole('button', { name: 'Submit answer' }).click()
+      await expect(page.getByRole('heading', { name: 'Solution explained' })).toBeVisible()
+      await expectNoViolations(page, 'completed challenge with explanation')
+      await page.goto('/')
+      await expect(page.getByText(/Completed: /).first()).toBeVisible()
+      await expectNoViolations(page, 'dashboard with activity')
+      await page.goto('/progress')
+      await page.getByLabel(/to confirm/).fill('RESET')
+      await page.getByRole('button', { name: 'Reset all progress' }).click()
+      await expect(page.getByRole('status').filter({ hasText: 'Progress reset' })).toBeVisible()
+      await expectNoViolations(page, 'progress page after reset')
+    })
   })
 }
 
-test('states created by learning (hints, feedback, explanation, activity, reset notice) are accessible too', async ({ page }) => {
-  const scan = async (label: string) => {
-    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
-    expect(results.violations.map((violation) => `${label}: ${violation.id} - ${violation.help}`)).toEqual([])
-  }
-  await page.goto('/challenges/linux-hidden-files')
-  await page.getByRole('button', { name: /Reveal hint 1 of 3/ }).click()
-  await scan('hint confirmation')
-  await page.getByRole('button', { name: 'Reveal hint 1', exact: true }).click()
-  await page.getByLabel('Type your answer').fill('wrong')
-  await page.getByRole('button', { name: 'Submit answer' }).click()
-  await expect(page.getByText(/Not quite/)).toBeVisible()
-  await scan('revealed hint and wrong-answer feedback')
-  await page.getByLabel('Type your answer').fill('Pa55-Lab-Only')
-  await page.getByRole('button', { name: 'Submit answer' }).click()
-  await expect(page.getByRole('heading', { name: 'Solution explained' })).toBeVisible()
-  await scan('completed challenge with explanation')
+test('the theme toggle switches immediately and the choice survives a reload', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'light' })
   await page.goto('/')
-  await expect(page.getByText(/Completed: /).first()).toBeVisible()
-  await scan('dashboard with activity')
-  // Leave a fresh course behind for the other specs (they share the in-memory database).
-  await page.goto('/progress')
-  await page.getByLabel(/to confirm/).fill('RESET')
-  await page.getByRole('button', { name: 'Reset all progress' }).click()
-  await expect(page.getByRole('status').filter({ hasText: 'Progress reset' })).toBeVisible()
-  await scan('progress page after reset')
+  const html = page.locator('html')
+  await expect(html).not.toHaveClass(/dark/)
+  await page.getByRole('button', { name: 'Dark theme' }).click()
+  await expect(html).toHaveClass(/dark/)
+  await page.reload()
+  await expect(html).toHaveClass(/dark/) // applied by the inline script before React even starts
+  await expect(page.getByRole('button', { name: 'Dark theme' })).toHaveAttribute('aria-pressed', 'true')
+  await page.getByRole('button', { name: 'Use system theme' }).click()
+  await expect(html).not.toHaveClass(/dark/) // the emulated system theme is light
 })
 
 test('each page has its own title and navigation moves focus to the new content', async ({ page }) => {

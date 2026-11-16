@@ -7,8 +7,8 @@ realistic scenarios: they investigate in a **simulated** Linux terminal, reveal 
 submit an answer that the server checks and scores, and then read a full explanation of the solution. Progress,
 points and activity are stored in SQLite and shown on a dashboard.
 
-> **Status:** MVP complete (development Phases 1–10). 7 modules, 14 challenges, 128 backend tests, 28
-> frontend component tests and 42 end-to-end browser tests passing. The design and phase plan are in
+> **Status:** MVP complete (development Phases 1–10). 7 modules, 14 challenges, 128 backend tests, 33
+> frontend component tests and 62 end-to-end browser tests passing. The design and phase plan are in
 > [docs/PLAN.md](docs/PLAN.md).
 
 ---
@@ -43,7 +43,7 @@ points and activity are stored in SQLite and shown on a dashboard.
 | **Server-side scoring** | 100 / 200 / 300 points by difficulty, minus 10% per hint used; awarded exactly once; never accepted from the browser. |
 | **Progress tracking** | Progress page with totals, module completion times, every challenge's attempts / hints / points / completion time, and the full activity history. |
 | **Reset** | Delete all progress (after typing RESET) to start the course again, e.g. before a demonstration. |
-| **Friendly, accessible, responsive UI** | A bright learning theme with a colour and icon per module, an encouraging dashboard and step-by-step challenge pages. Works from 320 px phones to desktops; keyboard usable; WCAG 2.1 A/AA checks pass with axe-core. |
+| **Friendly, accessible, responsive UI** | A bright learning theme with a dark mode (Light / Dark / System toggle in the header), a colour and icon per module, an encouraging dashboard and step-by-step challenge pages. Works from 320 px phones to desktops; keyboard usable; WCAG 2.1 A/AA checks pass with axe-core in both themes. |
 
 ## Quick start (Windows PowerShell)
 
@@ -143,10 +143,20 @@ states) and render shared components (`src/components/`). Every request goes thr
 turns failures into readable messages. The challenge page keeps the challenge in state and replaces it with the
 refreshed copy returned by hint and answer requests, so the terminal session survives.
 
-**Visual design**: a light, beginner-friendly theme. Colour tokens live in `src/index.css`; indigo is the single
+**Visual design**: a bright, beginner-friendly theme with a matching dark mode. Colour tokens live in `src/index.css`; indigo is the single
 accent for actions, and status colours mean the same thing everywhere (green = completed, amber = hints and
 points, red = danger). Each module has its own icon and colour (`src/utils/moduleTheme.ts`). The terminal is
-deliberately dark, like a real one. Shared building blocks: `Card`, `StatCard`, `ModuleIcon`, badges and button
+deliberately dark, like a real one.
+
+**Dark mode**: components use colour *roles* (`surface`, `ink`, `muted`, `accent`, `success-soft`, ...) rather
+than raw palette names. `src/index.css` defines every role twice, once for light and once under the `.dark` class
+on `<html>`, so switching theme only swaps token values. The header toggle offers Light, Dark and System (the
+default, which follows the operating system and reacts when it changes). The choice is stored in the browser's
+`localStorage` under `cyberlab-theme` (`src/utils/theme.ts`, `src/hooks/useTheme.ts`); a small inline script in
+`index.html` applies it before the first paint, so there is no white flash. If storage is blocked or holds an
+unknown value, the app falls back to System.
+
+Shared building blocks: `Card`, `StatCard`, `ModuleIcon`, badges and button
 styles in `src/utils/styles.ts`.
 
 **Key design decisions**
@@ -214,10 +224,10 @@ CyberLab/
     └── src/
         ├── main.tsx, router.tsx    entry point and routes
         ├── api/                    client.ts (fetch + errors), endpoints.ts, types.ts
-        ├── hooks/                  useApi.ts, useDocumentTitle.ts
-        ├── components/             layout, ui (badges, states, cards), content (lists, reset), challenge (terminal, hints, answer, explanation)
+        ├── hooks/                  useApi.ts, useDocumentTitle.ts, useTheme.ts
+        ├── components/             layout (header, theme toggle), ui (badges, states, cards), content (lists, reset), challenge (terminal, hints, answer, explanation)
         ├── pages/                  Dashboard, Modules, ModuleDetail, Challenges, Challenge, Progress, NotFound
-        ├── utils/                  formatting and terminal path helpers
+        ├── utils/                  formatting, terminal path and theme helpers, styles
         └── test/                   test setup, helpers, source security scan
 ```
 
@@ -424,8 +434,8 @@ Besides the terminal security model above, every endpoint is protected as follow
 | Suite | Command | Result | Covers |
 |---|---|---|---|
 | Backend | `cd backend; npm test` | 128 passing | Every endpoint, validation, scoring, hints, submissions, progress, reset, persistence across restarts, seeding, content solvability, terminal engine, hostile terminal input, HTTP security (headers, CSRF, DNS rebinding, methods, injection, errors) |
-| Frontend components | `cd frontend; npm test` | 28 passing | Terminal (exact requests, prompt, history keys, clear, errors, output rendered as text), hint confirmation, answer feedback, reset confirmation, API client errors, source security scan |
-| End-to-end | `cd frontend; npm run test:e2e` | 42 passing, 6 skipped | Full learner journey; every page on desktop and a 390 px phone without horizontal scrolling or console errors; 404 pages; WCAG 2.1 A/AA checks with axe-core (including hint, feedback, explanation and reset states); keyboard-only use; page titles and focus after navigation |
+| Frontend components | `cd frontend; npm test` | 33 passing | Terminal (exact requests, prompt, history keys, clear, errors, output rendered as text), theme toggle (system default, saved choice, OS changes, blocked storage), hint confirmation, answer feedback, reset confirmation, API client errors, source security scan |
+| End-to-end | `cd frontend; npm run test:e2e` | 62 passing, 6 skipped | Full learner journey; every page on desktop and a 390 px phone without horizontal scrolling or console errors; 404 pages; WCAG 2.1 A/AA checks with axe-core in the light **and** dark theme (including hint, feedback, explanation and reset states); theme toggle persists across reloads; keyboard-only use; page titles and focus after navigation |
 
 The end-to-end suite starts its own API and web servers on ports 4100 and 5174 with an **in-memory database**, so
 it never touches your data or a running `npm run dev`. It uses the installed Microsoft Edge; set

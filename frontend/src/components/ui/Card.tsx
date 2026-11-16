@@ -2,12 +2,12 @@ import type { LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 const iconTones = {
-  indigo: 'bg-indigo-100 text-indigo-700',
-  emerald: 'bg-emerald-100 text-emerald-700',
-  amber: 'bg-amber-100 text-amber-800',
-  sky: 'bg-sky-100 text-sky-700',
-  rose: 'bg-rose-100 text-rose-700',
-  slate: 'bg-slate-100 text-slate-700',
+  indigo: 'bg-accent-tile text-accent-ink',
+  emerald: 'bg-success-tile text-success-ink',
+  amber: 'bg-warning-tile text-warning-ink',
+  sky: 'bg-info-tile text-info-ink',
+  rose: 'bg-danger-tile text-danger-ink',
+  slate: 'bg-surface-3 text-muted',
 }
 
 export type Tone = keyof typeof iconTones

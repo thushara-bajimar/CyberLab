@@ -4,9 +4,9 @@ import type { ActivityItem, ActivityType } from '../../api/types'
 import { activityLabel, formatDateTime, timeAgo } from '../../utils/format'
 
 const icon: Record<ActivityType, { Icon: typeof CheckCircle2; chip: string }> = {
-  completed: { Icon: CheckCircle2, chip: 'bg-emerald-100 text-emerald-700' },
-  hint_revealed: { Icon: Lightbulb, chip: 'bg-amber-100 text-amber-800' },
-  incorrect_attempt: { Icon: RotateCcw, chip: 'bg-slate-100 text-slate-600' },
+  completed: { Icon: CheckCircle2, chip: 'bg-success-tile text-success-ink' },
+  hint_revealed: { Icon: Lightbulb, chip: 'bg-warning-tile text-warning-ink' },
+  incorrect_attempt: { Icon: RotateCcw, chip: 'bg-surface-3 text-muted' },
 }
 
 /** Activity feed shared by the dashboard and the progress page. */
@@ -26,7 +26,7 @@ export function ActivityList({ items, showModule = false }: { items: ActivityIte
                 {/* Underlined so the link is recognisable without relying on colour (WCAG link-in-text-block). */}
                 <Link
                   to={`/challenges/${item.challengeId}`}
-                  className="font-semibold text-indigo-700 underline decoration-indigo-300 underline-offset-2 hover:decoration-indigo-700"
+                  className="font-semibold text-accent-ink underline decoration-accent-line underline-offset-2 hover:decoration-accent-ink"
                 >
                   {item.challengeTitle}
                 </Link>

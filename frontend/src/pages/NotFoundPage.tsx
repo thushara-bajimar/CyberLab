@@ -12,7 +12,7 @@ export function NotFoundPage() {
   const Icon = unexpected ? TriangleAlert : Compass
   return (
     <div className="mx-auto max-w-md py-16 text-center">
-      <span className={`mx-auto grid size-16 place-items-center rounded-2xl ${unexpected ? 'bg-rose-100 text-rose-700' : 'bg-indigo-100 text-indigo-700'}`} aria-hidden="true">
+      <span className={`mx-auto grid size-16 place-items-center rounded-2xl ${unexpected ? 'bg-danger-tile text-danger-ink' : 'bg-accent-tile text-accent-ink'}`} aria-hidden="true">
         <Icon className="size-8" />
       </span>
       <h1 className="mt-5 text-2xl font-bold text-ink">{unexpected ? 'Something went wrong' : 'Page not found'}</h1>
