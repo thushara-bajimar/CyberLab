@@ -99,7 +99,7 @@ export function DashboardPage() {
         <StatCard label="Completion" value={`${totals.completionPercent}%`} icon={Percent} tone="indigo" note="Of the whole course" />
       </section>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-3">
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Card title="Your learning path" icon={MapIcon} id="path-heading" className="lg:col-span-2" action={
           <Link to="/modules" className="text-sm font-semibold text-accent-ink hover:underline">All modules</Link>
         }>
@@ -113,7 +113,7 @@ export function DashboardPage() {
                     <ModuleIcon moduleId={module.id} size="sm" />
                     <div className="min-w-0 flex-1">
                       <div className="mb-1.5 flex items-center justify-between gap-2 text-sm">
-                        <span className="truncate font-semibold text-ink">{module.title}</span>
+                        <span className="font-semibold text-ink">{module.title}</span>
                         <span className="shrink-0 text-muted">
                           {module.completedChallenges} of {module.totalChallenges}
                         </span>

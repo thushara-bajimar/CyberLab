@@ -8,8 +8,9 @@ submit an answer that the server checks and scores, and then read a full explana
 points and activity are stored in SQLite and shown on a dashboard.
 
 > **Status:** MVP complete (development Phases 1–10). 7 modules, 14 challenges, 128 backend tests, 33
-> frontend component tests and 62 end-to-end browser tests passing. The design and phase plan are in
-> [docs/PLAN.md](docs/PLAN.md).
+> frontend component tests and 64 end-to-end browser tests passing. The design and phase plan are in
+> [docs/PLAN.md](docs/PLAN.md). The complete technical documentation (89 pages, generated from the code) is
+> [docs/CyberLab_Complete_Technical_Documentation.pdf](docs/CyberLab_Complete_Technical_Documentation.pdf).
 
 ---
 
@@ -435,12 +436,16 @@ Besides the terminal security model above, every endpoint is protected as follow
 |---|---|---|---|
 | Backend | `cd backend; npm test` | 128 passing | Every endpoint, validation, scoring, hints, submissions, progress, reset, persistence across restarts, seeding, content solvability, terminal engine, hostile terminal input, HTTP security (headers, CSRF, DNS rebinding, methods, injection, errors) |
 | Frontend components | `cd frontend; npm test` | 33 passing | Terminal (exact requests, prompt, history keys, clear, errors, output rendered as text), theme toggle (system default, saved choice, OS changes, blocked storage), hint confirmation, answer feedback, reset confirmation, API client errors, source security scan |
-| End-to-end | `cd frontend; npm run test:e2e` | 62 passing, 6 skipped | Full learner journey; every page on desktop and a 390 px phone without horizontal scrolling or console errors; 404 pages; WCAG 2.1 A/AA checks with axe-core in the light **and** dark theme (including hint, feedback, explanation and reset states); theme toggle persists across reloads; keyboard-only use; page titles and focus after navigation |
+| End-to-end | `cd frontend; npm run test:e2e` | 64 passing, 6 skipped | Full learner journey; every page on desktop and a 390 px phone without horizontal scrolling or console errors; every page at 320 px width; 404 pages; WCAG 2.1 A/AA checks with axe-core in the light **and** dark theme (including hint, feedback, explanation and reset states); theme toggle persists across reloads; keyboard-only use; page titles and focus after navigation |
 
 The end-to-end suite starts its own API and web servers on ports 4100 and 5174 with an **in-memory database**, so
 it never touches your data or a running `npm run dev`. It uses the installed Microsoft Edge; set
 `PLAYWRIGHT_CHANNEL=chrome` to use Chrome. The 6 skipped tests are the journey and keyboard tests on the phone
 viewport (they run once, on desktop).
+
+In Git Bash, if Vitest reports "failed to find the current suite" for every file, the folder was opened with a
+lower-case drive letter (`d:\...`) while npm's shim uses `D:\...`, so Vitest is loaded twice. Use PowerShell, or
+`cd /D/...` with a capital drive letter.
 
 ## Known limitations
 

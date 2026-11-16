@@ -21,6 +21,17 @@ for (const path of PAGES) {
   })
 }
 
+test('every page fits a 320 px wide screen (the smallest common phone width)', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 640 })
+  for (const path of [...PAGES, '/no-such-page']) {
+    await page.goto(path)
+    await expect(page.getByRole('main')).toBeVisible()
+    await page.waitForLoadState('networkidle')
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)
+    expect(overflow, `${path} must not scroll horizontally at 320 px`).toBeLessThanOrEqual(0)
+  }
+})
+
 test('unknown pages show a friendly 404', async ({ page }) => {
   await page.goto('/challenges/does-not-exist')
   await expect(page.getByRole('heading', { name: 'Challenge not found' })).toBeVisible()
