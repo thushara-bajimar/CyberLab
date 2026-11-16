@@ -1,16 +1,50 @@
 @import "tailwindcss";
 
-/* Design tokens used across the app (Tailwind v4 reads them from @theme). */
+/*
+ * CyberLab design tokens.
+ *
+ * A bright, friendly learning theme: white cards on a soft background, dark readable text, and one accent
+ * colour (indigo) for actions. Status colours are used consistently: green = success / completed,
+ * amber = hints, red = danger. The terminal keeps a dark look on purpose, because real terminals look like that.
+ * All text colour pairs meet WCAG AA contrast (checked automatically by the axe-core e2e tests).
+ */
 @theme {
   /* System font stacks only: no web fonts are downloaded. */
-  --font-sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, "Cascadia Code", Consolas, "Courier New", monospace;
+
+  --color-canvas: #f4f6fb; /* page background */
+  --color-surface: #ffffff; /* cards */
+  --color-line: #e3e7f0; /* card borders and dividers */
+  --color-ink: #1b2035; /* main text */
+  --color-muted: #4a5068; /* secondary text (7:1 on white) */
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
-  @apply bg-slate-950 text-slate-100 antialiased;
+  @apply bg-canvas font-sans text-ink antialiased;
+}
+
+/* One clearly visible focus style for keyboard users everywhere. */
+:focus-visible {
+  outline: 3px solid var(--color-indigo-500);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+::selection {
+  background: var(--color-indigo-100);
+  color: var(--color-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

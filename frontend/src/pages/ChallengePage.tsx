@@ -1,5 +1,5 @@
-import { ChevronLeft, ChevronRight, Flag, Lightbulb, Target, TerminalSquare } from 'lucide-react'
-import { useState, type ReactNode } from 'react'
+import { BookOpen, ChevronLeft, ChevronRight, Flag, ListOrdered, SquareTerminal, Target, Trophy } from 'lucide-react'
+import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { getChallenge } from '../api/endpoints'
 import type { ChallengeDetail } from '../api/types'
@@ -8,21 +8,13 @@ import { ExplanationPanel } from '../components/challenge/ExplanationPanel'
 import { HintsPanel } from '../components/challenge/HintsPanel'
 import { Terminal } from '../components/challenge/Terminal'
 import { DifficultyBadge, StatusBadge } from '../components/ui/Badges'
+import { Card } from '../components/ui/Card'
+import { ModuleIcon } from '../components/ui/ModuleIcon'
 import { PageHeader } from '../components/ui/PageHeader'
 import { ErrorState, LoadingState, NotFoundState } from '../components/ui/States'
 import { useApi } from '../hooks/useApi'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
-
-function Panel({ title, icon: Icon, children, id }: { title: string; icon: typeof Flag; children: ReactNode; id: string }) {
-  return (
-    <section className="rounded-lg border border-slate-800 bg-slate-900/60 p-5" aria-labelledby={id}>
-      <h2 id={id} className="mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide text-slate-300 uppercase">
-        <Icon className="size-4 text-emerald-400" aria-hidden="true" /> {title}
-      </h2>
-      {children}
-    </section>
-  )
-}
+import { secondaryButton } from '../utils/styles'
 
 /** Loads the challenge, then hands it to ChallengeView, which keeps it in state as hints and answers update it. */
 export function ChallengePage() {
@@ -50,84 +42,93 @@ function ChallengeView({ initial }: { initial: ChallengeDetail }) {
 
   return (
     <>
-      <nav aria-label="Breadcrumb" className="mb-4 flex flex-wrap items-center gap-1 text-sm text-slate-400">
-        <Link to="/modules" className="hover:text-emerald-300">
+      <nav aria-label="Breadcrumb" className="mb-5 flex flex-wrap items-center gap-1 text-sm font-medium text-muted">
+        <Link to="/modules" className="text-indigo-700 hover:underline">
           Modules
         </Link>
         <ChevronRight className="size-4" aria-hidden="true" />
-        <Link to={`/modules/${data.moduleId}`} className="hover:text-emerald-300">
+        <Link to={`/modules/${data.moduleId}`} className="text-indigo-700 hover:underline">
           {data.moduleTitle}
         </Link>
       </nav>
       <PageHeader
+        icon={<ModuleIcon moduleId={data.moduleId} size="lg" />}
         eyebrow="Challenge"
         title={data.title}
         actions={
-          <div className="flex flex-wrap items-center gap-3 text-sm text-slate-400">
+          <div className="flex flex-wrap items-center gap-2 text-sm">
             <DifficultyBadge difficulty={data.difficulty} />
             <StatusBadge status={data.status} />
-            <span>{data.status === 'completed' ? `${data.pointsAwarded}/${data.basePoints} pts earned` : `${data.scoring.pointsAvailable ?? data.basePoints} pts available`}</span>
+            <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-900 ring-1 ring-amber-200 ring-inset">
+              <Trophy className="size-3.5" aria-hidden="true" />
+              {data.status === 'completed' ? `${data.pointsAwarded}/${data.basePoints} pts earned` : `${data.scoring.pointsAvailable ?? data.basePoints} pts available`}
+            </span>
           </div>
         }
       />
 
       <div className="grid gap-6 lg:grid-cols-5">
-        <div className="flex flex-col gap-6 lg:col-span-3">
-          <Panel title="Scenario" icon={Flag} id="scenario-heading">
-            <p className="leading-relaxed text-slate-200">{data.scenario}</p>
-            <p className="mt-4 flex gap-2 rounded-md bg-slate-950 p-3 text-sm text-slate-300">
-              <Target className="mt-0.5 size-4 shrink-0 text-emerald-400" aria-hidden="true" />
-              <span>
-                <strong className="text-slate-100">Objective: </strong>
+        <div className="flex min-w-0 flex-col gap-6 lg:col-span-3">
+          <Card title="Your mission" icon={Flag} id="scenario-heading">
+            <p className="text-lg leading-relaxed text-ink">{data.scenario}</p>
+            <div className="mt-5 flex gap-3 rounded-xl border border-indigo-200 bg-indigo-50 p-4">
+              <Target className="mt-0.5 size-5 shrink-0 text-indigo-700" aria-hidden="true" />
+              <p className="text-ink">
+                <strong className="font-semibold">Your goal: </strong>
                 {data.objective}
-              </span>
-            </p>
-          </Panel>
+              </p>
+            </div>
+          </Card>
           {data.terminal && (
-            <Panel title="Simulated terminal" icon={TerminalSquare} id="terminal-heading">
-              <p className="mb-3 text-sm text-slate-400">
-                Environment: <span className="text-slate-200">{data.terminal.title}</span>. Commands run in a read-only simulation on the server;
-                nothing you type touches a real system.
+            <Card title="Investigate in the terminal" icon={SquareTerminal} tone="slate" id="terminal-heading">
+              <p className="mb-4 text-sm leading-relaxed text-muted">
+                You are working on the <strong className="font-semibold text-ink">{data.terminal.title}</strong>. Type commands below and press Enter. It
+                is a safe simulation: nothing you type can harm a real computer, so feel free to explore.
               </p>
               <Terminal challengeId={data.id} environment={data.terminal} />
-            </Panel>
+            </Card>
           )}
           <AnswerPanel challenge={data} onUpdate={setData} />
           {data.explanation && <ExplanationPanel explanation={data.explanation} />}
         </div>
 
         <div className="flex flex-col gap-6 lg:col-span-2">
-          <Panel title="Instructions" icon={Target} id="instructions-heading">
-            <ol className="list-decimal space-y-2 pl-5 text-sm text-slate-300">
-              {data.instructions.map((step) => (
-                <li key={step}>{step}</li>
+          <Card title="How to approach it" icon={ListOrdered} tone="sky" id="instructions-heading">
+            <ol className="flex flex-col gap-3">
+              {data.instructions.map((step, index) => (
+                <li key={step} className="flex gap-3 text-sm leading-relaxed text-ink">
+                  <span className="grid size-6 shrink-0 place-items-center rounded-full bg-sky-100 text-xs font-bold text-sky-800" aria-hidden="true">
+                    {index + 1}
+                  </span>
+                  <span>{step}</span>
+                </li>
               ))}
             </ol>
-          </Panel>
-          <Panel title="Concepts and resources" icon={Lightbulb} id="resources-heading">
-            <dl className="flex flex-col gap-3 text-sm">
+          </Card>
+          <Card title="Key concepts" icon={BookOpen} tone="emerald" id="resources-heading">
+            <dl className="flex flex-col gap-3">
               {data.resources.map((resource) => (
-                <div key={resource.title}>
-                  <dt className="font-medium text-slate-100">{resource.title}</dt>
-                  <dd className="text-slate-400">{resource.body}</dd>
+                <div key={resource.title} className="rounded-xl bg-slate-50 p-3.5">
+                  <dt className="font-semibold text-ink">{resource.title}</dt>
+                  <dd className="mt-0.5 text-sm leading-relaxed text-muted">{resource.body}</dd>
                 </div>
               ))}
             </dl>
-          </Panel>
+          </Card>
           <HintsPanel challenge={data} onUpdate={setData} />
         </div>
       </div>
 
-      <nav aria-label="Challenge navigation" className="mt-8 flex justify-between gap-4 border-t border-slate-800 pt-4 text-sm">
+      <nav aria-label="Challenge navigation" className="mt-10 flex justify-between gap-4 border-t border-line pt-6">
         {data.navigation.previousId ? (
-          <Link to={`/challenges/${data.navigation.previousId}`} className="inline-flex items-center gap-1 text-slate-400 hover:text-emerald-300">
+          <Link to={`/challenges/${data.navigation.previousId}`} className={secondaryButton}>
             <ChevronLeft className="size-4" aria-hidden="true" /> Previous challenge
           </Link>
         ) : (
           <span />
         )}
         {data.navigation.nextId && (
-          <Link to={`/challenges/${data.navigation.nextId}`} className="inline-flex items-center gap-1 text-slate-400 hover:text-emerald-300">
+          <Link to={`/challenges/${data.navigation.nextId}`} className={secondaryButton}>
             Next challenge <ChevronRight className="size-4" aria-hidden="true" />
           </Link>
         )}

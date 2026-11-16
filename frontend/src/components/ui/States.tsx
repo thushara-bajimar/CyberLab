@@ -1,31 +1,30 @@
-import { AlertTriangle, Inbox, Loader2, RefreshCw } from 'lucide-react'
+import { CloudOff, Compass, Inbox, Loader2, RefreshCw } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import { primaryButton, secondaryButton } from '../../utils/styles'
 
 export function LoadingState({ label = 'Loading…' }: { label?: string }) {
   return (
-    <div className="flex items-center gap-2 py-10 text-slate-400" role="status">
-      <Loader2 className="size-5 animate-spin" aria-hidden="true" />
-      <span>{label}</span>
+    <div className="flex items-center justify-center gap-3 py-16 text-muted" role="status">
+      <Loader2 className="size-6 animate-spin text-indigo-600" aria-hidden="true" />
+      <span className="text-base">{label}</span>
     </div>
   )
 }
 
 export function ErrorState({ message, onRetry }: { message: string; onRetry?: () => void }) {
   return (
-    <div className="rounded-lg border border-rose-900/70 bg-rose-950/40 p-4" role="alert">
-      <div className="flex items-start gap-3">
-        <AlertTriangle className="mt-0.5 size-5 shrink-0 text-rose-400" aria-hidden="true" />
+    <div className="rounded-2xl border border-rose-200 bg-rose-50 p-5" role="alert">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+        <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-rose-100 text-rose-700" aria-hidden="true">
+          <CloudOff className="size-5" />
+        </span>
         <div className="flex-1">
-          <p className="font-medium text-rose-200">Could not load this page</p>
-          <p className="mt-1 text-sm text-rose-300/90">{message}</p>
+          <p className="font-semibold text-rose-900">Could not load this page</p>
+          <p className="mt-1 text-sm text-rose-800">{message}</p>
         </div>
         {onRetry && (
-          <button
-            type="button"
-            onClick={onRetry}
-            className="inline-flex items-center gap-1 rounded-md border border-rose-800 px-3 py-1.5 text-sm text-rose-200 hover:bg-rose-900/50"
-          >
+          <button type="button" onClick={onRetry} className={secondaryButton}>
             <RefreshCw className="size-4" aria-hidden="true" /> Retry
           </button>
         )}
@@ -37,11 +36,13 @@ export function ErrorState({ message, onRetry }: { message: string; onRetry?: ()
 /** For content that does not exist (HTTP 404): no retry, a link back instead. */
 export function NotFoundState({ what, backTo, backLabel }: { what: string; backTo: string; backLabel: string }) {
   return (
-    <div className="mx-auto max-w-md py-12 text-center" role="alert">
-      <p className="font-mono text-emerald-400">404</p>
-      <h1 className="mt-2 text-2xl font-semibold">{what} not found</h1>
-      <p className="mt-2 text-slate-400">The address may be mistyped, or the content may have been removed from the course.</p>
-      <Link to={backTo} className="mt-6 inline-block rounded-md bg-emerald-500 px-4 py-2 font-medium text-slate-950 hover:bg-emerald-400">
+    <div className="mx-auto max-w-md py-16 text-center" role="alert">
+      <span className="mx-auto grid size-16 place-items-center rounded-2xl bg-indigo-100 text-indigo-700" aria-hidden="true">
+        <Compass className="size-8" />
+      </span>
+      <h1 className="mt-5 text-2xl font-bold text-ink">{what} not found</h1>
+      <p className="mt-2 text-muted">The address may be mistyped, or the content may have been removed from the course.</p>
+      <Link to={backTo} className={`${primaryButton} mt-6`}>
         {backLabel}
       </Link>
     </div>
@@ -50,10 +51,10 @@ export function NotFoundState({ what, backTo, backLabel }: { what: string; backT
 
 export function EmptyState({ title, children }: { title: string; children?: ReactNode }) {
   return (
-    <div className="flex flex-col items-center gap-2 rounded-lg border border-dashed border-slate-800 px-4 py-8 text-center">
-      <Inbox className="size-6 text-slate-400" aria-hidden="true" />
-      <p className="font-medium text-slate-300">{title}</p>
-      {children && <div className="max-w-md text-sm text-slate-400">{children}</div>}
+    <div className="flex flex-col items-center gap-2 rounded-xl border-2 border-dashed border-slate-200 px-4 py-8 text-center">
+      <Inbox className="size-7 text-slate-500" aria-hidden="true" />
+      <p className="font-semibold text-ink">{title}</p>
+      {children && <div className="max-w-md text-sm text-muted">{children}</div>}
     </div>
   )
 }

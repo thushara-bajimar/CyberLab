@@ -43,7 +43,7 @@ points and activity are stored in SQLite and shown on a dashboard.
 | **Server-side scoring** | 100 / 200 / 300 points by difficulty, minus 10% per hint used; awarded exactly once; never accepted from the browser. |
 | **Progress tracking** | Progress page with totals, module completion times, every challenge's attempts / hints / points / completion time, and the full activity history. |
 | **Reset** | Delete all progress (after typing RESET) to start the course again, e.g. before a demonstration. |
-| **Accessible, responsive UI** | Works from 320 px phones to desktops; keyboard usable; WCAG 2.1 A/AA checks pass with axe-core. |
+| **Friendly, accessible, responsive UI** | A bright learning theme with a colour and icon per module, an encouraging dashboard and step-by-step challenge pages. Works from 320 px phones to desktops; keyboard usable; WCAG 2.1 A/AA checks pass with axe-core. |
 
 ## Quick start (Windows PowerShell)
 
@@ -142,6 +142,12 @@ repository runs parameterised SQL → JSON response. Errors from any step go to 
 states) and render shared components (`src/components/`). Every request goes through `src/api/client.ts`, which
 turns failures into readable messages. The challenge page keeps the challenge in state and replaces it with the
 refreshed copy returned by hint and answer requests, so the terminal session survives.
+
+**Visual design**: a light, beginner-friendly theme. Colour tokens live in `src/index.css`; indigo is the single
+accent for actions, and status colours mean the same thing everywhere (green = completed, amber = hints and
+points, red = danger). Each module has its own icon and colour (`src/utils/moduleTheme.ts`). The terminal is
+deliberately dark, like a real one. Shared building blocks: `Card`, `StatCard`, `ModuleIcon`, badges and button
+styles in `src/utils/styles.ts`.
 
 **Key design decisions**
 

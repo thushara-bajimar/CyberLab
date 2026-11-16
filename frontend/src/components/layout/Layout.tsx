@@ -22,9 +22,11 @@ function ServerStatus() {
   const health = useApi(getHealth)
   const online = health.status === 'success' && health.data.database.status === 'ok'
   const label = health.status === 'loading' ? 'Checking server' : online ? 'Server online' : 'Server offline'
-  const dot = health.status === 'loading' ? 'bg-slate-500' : online ? 'bg-emerald-400' : 'bg-rose-500'
+  const style =
+    health.status === 'loading' ? 'bg-slate-100 text-slate-700' : online ? 'bg-emerald-50 text-emerald-800' : 'bg-rose-50 text-rose-800'
+  const dot = health.status === 'loading' ? 'bg-slate-400' : online ? 'bg-emerald-500' : 'bg-rose-500'
   return (
-    <span className="inline-flex items-center gap-2 text-xs text-slate-400" role="status" title={health.error ?? undefined}>
+    <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${style}`} role="status" title={health.error ?? undefined}>
       <span className={`size-2 rounded-full ${dot}`} aria-hidden="true" />
       {label}
     </span>
@@ -51,30 +53,38 @@ export function Layout() {
   const mainRef = useFocusMainOnNavigation()
   return (
     <div className="flex min-h-screen flex-col">
-      <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:m-2 focus:rounded focus:bg-emerald-500 focus:px-3 focus:py-1 focus:text-slate-950">
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:absolute focus:z-20 focus:m-2 focus:rounded-lg focus:bg-indigo-600 focus:px-4 focus:py-2 focus:font-semibold focus:text-white"
+      >
         Skip to main content
       </a>
-      <header className="sticky top-0 z-10 border-b border-slate-800 bg-slate-950/90 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
-          <NavLink to="/" className="flex items-center gap-2 font-semibold text-slate-50">
-            <ShieldCheck className="size-6 text-emerald-400" aria-hidden="true" />
-            CyberLab
+      <header className="sticky top-0 z-10 border-b border-line bg-white/95 backdrop-blur">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-8 gap-y-3 px-4 py-3">
+          <NavLink to="/" className="flex items-center gap-3">
+            <span className="grid size-10 place-items-center rounded-xl bg-indigo-600 text-white shadow-sm" aria-hidden="true">
+              <ShieldCheck className="size-6" />
+            </span>
+            <span className="leading-tight">
+              <span className="block text-lg font-bold text-ink">CyberLab</span>
+              <span className="block text-xs text-muted">Learn cybersecurity by doing</span>
+            </span>
           </NavLink>
           <nav aria-label="Main navigation" className="order-3 w-full sm:order-0 sm:w-auto">
             {/* Phones: four equal columns with the icon above a small label. From sm upwards: one row. */}
-            <ul className="grid grid-cols-4 gap-1 sm:flex">
+            <ul className="grid grid-cols-4 gap-1 sm:flex sm:gap-1.5">
               {navItems.map(({ to, label, icon: Icon, end }) => (
                 <li key={to}>
                   <NavLink
                     to={to}
                     end={end}
                     className={({ isActive }) =>
-                      `flex flex-col items-center gap-0.5 rounded-md px-1 py-1.5 text-xs transition-colors sm:flex-row sm:gap-2 sm:px-3 sm:text-sm ${
-                        isActive ? 'bg-slate-800 text-emerald-300' : 'text-slate-400 hover:bg-slate-900 hover:text-slate-100'
+                      `flex flex-col items-center gap-1 rounded-xl px-1 py-2 text-xs font-semibold transition-colors sm:flex-row sm:gap-2 sm:px-3.5 sm:text-sm ${
+                        isActive ? 'bg-indigo-50 text-indigo-700' : 'text-muted hover:bg-slate-100 hover:text-ink'
                       }`
                     }
                   >
-                    <Icon className="size-4" aria-hidden="true" />
+                    <Icon className="size-5 sm:size-4" aria-hidden="true" />
                     {label}
                   </NavLink>
                 </li>
@@ -86,11 +96,11 @@ export function Layout() {
           </div>
         </div>
       </header>
-      <main id="main" ref={mainRef} tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 focus:outline-none">
+      <main id="main" ref={mainRef} tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 focus:outline-none sm:py-10">
         <Outlet />
       </main>
-      <footer className="border-t border-slate-800 py-4 text-center text-xs text-slate-400">
-        CyberLab · Learn Cybersecurity by Doing · All exercises run in a simulated environment
+      <footer className="border-t border-line bg-white py-5 text-center text-sm text-muted">
+        CyberLab · Learn Cybersecurity by Doing · Every exercise runs in a safe, simulated environment
       </footer>
       <ScrollRestoration />
     </div>

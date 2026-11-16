@@ -1,14 +1,16 @@
 import type { LucideIcon } from 'lucide-react'
+import { IconChip, type Tone } from './Card'
 
-export function StatCard({ label, value, note, icon: Icon }: { label: string; value: string | number; note?: string; icon: LucideIcon }) {
+/** A single number with a coloured icon. Stacks icon above text on phones (two cards per row), side by side from sm. */
+export function StatCard({ label, value, note, icon, tone = 'indigo' }: { label: string; value: string | number; note?: string; icon: LucideIcon; tone?: Tone }) {
   return (
-    <article className="rounded-lg border border-slate-800 bg-slate-900 p-4">
-      <div className="flex items-center justify-between text-slate-400">
-        <h3 className="text-xs font-medium tracking-wide uppercase">{label}</h3>
-        <Icon className="size-4" aria-hidden="true" />
+    <article className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-sm sm:flex-row sm:items-center sm:gap-4">
+      <IconChip icon={icon} tone={tone} />
+      <div className="min-w-0">
+        <h3 className="text-sm font-medium text-muted">{label}</h3>
+        <p className="text-2xl font-bold text-ink">{value}</p>
+        {note && <p className="text-xs text-muted">{note}</p>}
       </div>
-      <p className="mt-2 text-2xl font-semibold text-slate-100">{value}</p>
-      {note && <p className="mt-1 text-xs text-slate-400">{note}</p>}
     </article>
   )
 }

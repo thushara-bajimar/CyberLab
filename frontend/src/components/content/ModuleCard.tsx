@@ -1,33 +1,41 @@
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Trophy } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import type { ModuleSummary } from '../../api/types'
+import { moduleTheme } from '../../utils/moduleTheme'
 import { DifficultyBadge, StatusBadge } from '../ui/Badges'
+import { ModuleIcon } from '../ui/ModuleIcon'
 import { ProgressBar } from '../ui/ProgressBar'
+
+const callToAction = { not_started: 'Start module', in_progress: 'Continue', completed: 'Review' } as const
 
 export function ModuleCard({ module }: { module: ModuleSummary }) {
   return (
-    <article className="flex flex-col rounded-lg border border-slate-800 bg-slate-900 p-5 transition-colors hover:border-slate-700">
-      <div className="flex items-center justify-between gap-2">
-        <span className="font-mono text-xs text-slate-400">Module {module.order}</span>
-        <DifficultyBadge difficulty={module.difficulty} />
+    <article className="relative flex h-full flex-col rounded-2xl border border-line bg-surface p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-300 hover:shadow-md">
+      <div className="flex items-start justify-between gap-3">
+        <ModuleIcon moduleId={module.id} size="lg" />
+        <StatusBadge status={module.status} />
       </div>
-      <h2 className="mt-2 text-lg font-semibold text-slate-50">
-        <Link to={`/modules/${module.id}`} className="after:absolute after:inset-0 hover:text-emerald-300 focus-visible:outline-none">
+      <p className="mt-4 text-sm font-semibold text-muted">Module {module.order}</p>
+      <h2 className="mt-0.5 text-xl font-bold text-ink">
+        {/* The link covers the whole card, so anywhere on the card opens the module. */}
+        <Link to={`/modules/${module.id}`} className="after:absolute after:inset-0 after:rounded-2xl focus-visible:outline-none focus-visible:after:outline-3 focus-visible:after:outline-indigo-500">
           {module.title}
         </Link>
       </h2>
-      <p className="mt-1 flex-1 text-sm text-slate-400">{module.summary}</p>
-      <div className="mt-4 flex items-center justify-between text-xs text-slate-400">
-        <StatusBadge status={module.status} />
-        <span>
-          {module.completedChallenges}/{module.totalChallenges} challenges · {module.pointsEarned}/{module.pointsPossible} pts
+      <p className="mt-2 flex-1 leading-relaxed text-muted">{module.summary}</p>
+      <div className="mt-5 flex flex-wrap items-center gap-2 text-sm text-muted">
+        <DifficultyBadge difficulty={module.difficulty} />
+        <span>{module.totalChallenges} challenges</span>
+        <span className="inline-flex items-center gap-1">
+          <Trophy className="size-3.5 text-amber-600" aria-hidden="true" />
+          {module.pointsEarned}/{module.pointsPossible} pts
         </span>
       </div>
-      <div className="mt-2">
-        <ProgressBar value={module.completedChallenges} max={module.totalChallenges} label={`${module.title} progress`} />
+      <div className="mt-3">
+        <ProgressBar value={module.completedChallenges} max={module.totalChallenges} label={`${module.title} progress`} fill={moduleTheme(module.id).bar} />
       </div>
-      <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-emerald-300" aria-hidden="true">
-        Open module <ArrowRight className="size-4" />
+      <span className="mt-5 inline-flex items-center gap-1 font-semibold text-indigo-700" aria-hidden="true">
+        {callToAction[module.status]} <ArrowRight className="size-4" />
       </span>
     </article>
   )

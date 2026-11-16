@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { ApiError } from '../../api/client'
 import { revealHint } from '../../api/endpoints'
 import type { ChallengeDetail } from '../../api/types'
+import { secondaryButton } from '../../utils/styles'
 
 /**
  * Progressive hints. Revealing a hint costs points, so the panel first states the exact cost and asks for
@@ -33,21 +34,24 @@ export function HintsPanel({ challenge, onUpdate }: { challenge: ChallengeDetail
   }
 
   return (
-    <section className="rounded-lg border border-slate-800 bg-slate-900/60 p-5" aria-labelledby="hints-heading">
-      <h2 id="hints-heading" className="mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide text-slate-300 uppercase">
-        <Lightbulb className="size-4 text-emerald-400" aria-hidden="true" /> Hints
+    <section className="rounded-2xl border border-amber-200 bg-amber-50/60 p-5 shadow-sm sm:p-6" aria-labelledby="hints-heading">
+      <h2 id="hints-heading" className="flex items-center gap-2.5 text-base font-semibold text-ink">
+        <span className="grid size-8 place-items-center rounded-lg bg-amber-100 text-amber-800" aria-hidden="true">
+          <Lightbulb className="size-4" />
+        </span>
+        Need a hint?
       </h2>
-      <p className="text-sm text-slate-400">
+      <p className="mt-3 text-sm leading-relaxed text-muted">
         {completed
           ? 'Challenge completed: all hints are shown for review, free of charge.'
-          : `${hints.total} progressive hints. Each one revealed before you solve the challenge costs ${cost} points (${scoring.hintPenaltyPercent}% of ${scoring.basePoints}).`}
+          : `Stuck? That is part of learning. There are ${hints.total} hints, from a gentle nudge to a strong clue. Each one revealed before you solve the challenge costs ${cost} points (${scoring.hintPenaltyPercent}% of ${scoring.basePoints}).`}
       </p>
 
       {hints.revealed.length > 0 && (
-        <ol className="mt-3 flex flex-col gap-2" aria-live="polite">
+        <ol className="mt-4 flex flex-col gap-2.5" aria-live="polite">
           {hints.revealed.map((hint) => (
-            <li key={hint.number} className="rounded-md border border-slate-800 bg-slate-950 p-3 text-sm text-slate-200">
-              <span className="mr-2 font-semibold text-amber-300">Hint {hint.number}</span>
+            <li key={hint.number} className="rounded-xl border border-amber-200 bg-white p-3.5 text-sm leading-relaxed text-ink">
+              <span className="mb-1 block text-xs font-bold tracking-wide text-amber-800 uppercase">Hint {hint.number}</span>
               {hint.text}
             </li>
           ))}
@@ -55,36 +59,37 @@ export function HintsPanel({ challenge, onUpdate }: { challenge: ChallengeDetail
       )}
 
       {!completed && next <= hints.total && (
-        <div className="mt-3">
+        <div className="mt-4">
           {confirming ? (
-            <div className="rounded-md border border-amber-900/60 bg-amber-950/30 p-3 text-sm" role="alertdialog" aria-label="Confirm hint">
-              <p className="text-amber-100">
+            <div className="rounded-xl border border-amber-300 bg-white p-4 text-sm" role="alertdialog" aria-label="Confirm hint">
+              <p className="text-ink">
                 Reveal hint {next}? This challenge will then be worth <strong>{available - cost}</strong> points instead of {available}.
               </p>
-              <div className="mt-2 flex gap-2">
+              <div className="mt-3 flex flex-wrap gap-2">
                 <button
                   type="button"
                   onClick={reveal}
                   disabled={busy}
-                  className="inline-flex items-center gap-1 rounded-md bg-amber-400 px-3 py-1.5 font-medium text-slate-950 hover:bg-amber-300 disabled:opacity-60"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-amber-500 px-4 py-2 font-semibold text-slate-950 shadow-sm hover:bg-amber-400 disabled:opacity-60"
                 >
                   {busy && <Loader2 className="size-4 animate-spin" aria-hidden="true" />} Reveal hint {next}
                 </button>
-                <button type="button" onClick={() => setConfirming(false)} disabled={busy} className="rounded-md border border-slate-700 px-3 py-1.5 text-slate-300 hover:bg-slate-800">
+                <button type="button" onClick={() => setConfirming(false)} disabled={busy} className={secondaryButton}>
                   Cancel
                 </button>
               </div>
             </div>
           ) : (
-            <button type="button" onClick={() => setConfirming(true)} className="rounded-md border border-slate-700 px-3 py-1.5 text-sm text-slate-200 hover:border-amber-500 hover:text-amber-200">
+            <button type="button" onClick={() => setConfirming(true)} className={`${secondaryButton} border-amber-300 hover:border-amber-500 hover:bg-amber-100`}>
+              <Lightbulb className="size-4 text-amber-700" aria-hidden="true" />
               Reveal hint {next} of {hints.total} (-{cost} points)
             </button>
           )}
         </div>
       )}
-      {!completed && next > hints.total && <p className="mt-3 text-xs text-slate-400">All hints revealed.</p>}
+      {!completed && next > hints.total && <p className="mt-4 text-sm text-muted">All hints revealed. You have everything you need!</p>}
       {error && (
-        <p className="mt-2 text-sm text-rose-400" role="alert">
+        <p className="mt-3 text-sm font-medium text-rose-800" role="alert">
           {error}
         </p>
       )}

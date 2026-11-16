@@ -19,22 +19,31 @@ export function ChallengesPage() {
   const challenges = useApi(getChallenges)
   useDocumentTitle('Challenges')
   const [filter, setFilter] = useState<Filter>('all')
+  const all = challenges.status === 'success' ? challenges.data.challenges : []
+  const count = (id: Filter) => (id === 'all' ? all.length : all.filter((challenge) => challenge.status === id).length)
 
   return (
     <>
-      <PageHeader eyebrow="Challenges" title="All challenges" description="Every challenge in the course, in the recommended learning order." />
-      <div className="mb-4 flex flex-wrap gap-2" role="group" aria-label="Filter by status">
+      <PageHeader
+        eyebrow="Challenges"
+        title="Practice challenges"
+        description="Every challenge in the course, in the recommended order. Each one is a short, realistic scenario you solve step by step."
+      />
+      <div className="mb-5 flex flex-wrap gap-2" role="group" aria-label="Filter by status">
         {filters.map((item) => (
           <button
             key={item.id}
             type="button"
             onClick={() => setFilter(item.id)}
             aria-pressed={filter === item.id}
-            className={`rounded-full border px-3 py-1 text-sm ${
-              filter === item.id ? 'border-emerald-500 bg-emerald-500/10 text-emerald-300' : 'border-slate-700 text-slate-400 hover:text-slate-100'
+            className={`inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-semibold transition-colors ${
+              filter === item.id ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-300 bg-white text-ink hover:border-indigo-400 hover:bg-indigo-50'
             }`}
           >
             {item.label}
+            {challenges.status === 'success' && (
+              <span className={`rounded-full px-1.5 text-xs ${filter === item.id ? 'bg-indigo-800 text-white' : 'bg-slate-100 text-slate-700'}`}>{count(item.id)}</span>
+            )}
           </button>
         ))}
       </div>
@@ -42,9 +51,9 @@ export function ChallengesPage() {
       {challenges.status === 'error' && <ErrorState message={challenges.error} onRetry={challenges.reload} />}
       {challenges.status === 'success' &&
         (() => {
-          const visible = challenges.data.challenges.filter((challenge) => filter === 'all' || challenge.status === filter)
+          const visible = all.filter((challenge) => filter === 'all' || challenge.status === filter)
           if (visible.length === 0) {
-            return <EmptyState title={challenges.data.challenges.length === 0 ? 'No challenges available' : 'No challenges match this filter'} />
+            return <EmptyState title={all.length === 0 ? 'No challenges available' : 'No challenges match this filter'} />
           }
           return (
             <div className="flex flex-col gap-3">

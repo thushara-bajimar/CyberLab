@@ -101,13 +101,22 @@ export function Terminal({ challengeId, environment }: { challengeId: string; en
   }
 
   return (
-    <div className="overflow-hidden rounded-md border border-slate-800 bg-black">
-      <div className="flex items-center justify-between border-b border-slate-800 bg-slate-950 px-3 py-1.5 text-xs text-slate-400">
-        <span className="inline-flex items-center gap-2">
-          <TerminalSquare className="size-3.5" aria-hidden="true" />
-          {environment.user}@{environment.hostname} · simulated
+    // Terminals are dark in real life, so this one is too: learners should recognise one when they meet it.
+    // Focus is shown on the whole terminal (ring) rather than as a box around the command line.
+    <div className="overflow-hidden rounded-xl border border-slate-800 bg-slate-950 shadow-md focus-within:ring-3 focus-within:ring-indigo-400">
+      <div className="flex items-center justify-between gap-3 border-b border-slate-800 bg-slate-900 px-4 py-2 text-xs text-slate-300">
+        <span className="inline-flex items-center gap-3">
+          <span className="flex gap-1.5" aria-hidden="true">
+            <span className="size-3 rounded-full bg-rose-400" />
+            <span className="size-3 rounded-full bg-amber-400" />
+            <span className="size-3 rounded-full bg-emerald-400" />
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <TerminalSquare className="size-3.5" aria-hidden="true" />
+            {environment.user}@{environment.hostname} · safe simulation
+          </span>
         </span>
-        <button type="button" onClick={() => setLines([])} className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 hover:bg-slate-800 hover:text-slate-200">
+        <button type="button" onClick={() => setLines([])} className="inline-flex items-center gap-1 rounded-md px-2 py-1 hover:bg-slate-800 hover:text-white">
           <Eraser className="size-3.5" aria-hidden="true" /> Clear
         </button>
       </div>
@@ -145,7 +154,7 @@ export function Terminal({ challengeId, environment }: { challengeId: string; en
             spellCheck={false}
             aria-busy={busy}
             // 16px on phones: smaller inputs make iOS zoom in when focused.
-            className="min-w-0 flex-1 bg-transparent text-base text-slate-100 caret-emerald-400 outline-none sm:text-[13px]"
+            className="min-w-0 flex-1 bg-transparent text-base text-slate-100 caret-emerald-400 outline-none focus-visible:outline-none sm:text-[13px]"
           />
         </form>
         {busy && <p className="text-slate-400">running…</p>}

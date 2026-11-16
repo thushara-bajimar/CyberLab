@@ -12,8 +12,8 @@ export function ModulesPage() {
     <>
       <PageHeader
         eyebrow="Learning modules"
-        title="Choose a topic"
-        description="Each module introduces one area of cybersecurity and ends with hands-on challenges. Work through them in order or jump to what interests you."
+        title="Choose what to learn"
+        description="Each module explains one area of cybersecurity in plain language and then lets you practise it with hands-on challenges. Follow the order or jump to whatever interests you."
       />
       {modules.status === 'loading' && <LoadingState label="Loading modules…" />}
       {modules.status === 'error' && <ErrorState message={modules.error} onRetry={modules.reload} />}
@@ -21,11 +21,9 @@ export function ModulesPage() {
         (modules.data.modules.length === 0 ? (
           <EmptyState title="No modules available">The course content has not been loaded on the server.</EmptyState>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {modules.data.modules.map((module) => (
-              <div key={module.id} className="relative">
-                <ModuleCard module={module} />
-              </div>
+              <ModuleCard key={module.id} module={module} />
             ))}
           </div>
         ))}
