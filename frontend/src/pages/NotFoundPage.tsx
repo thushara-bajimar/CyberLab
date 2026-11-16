@@ -2,8 +2,9 @@ import { Link, isRouteErrorResponse, useRouteError } from 'react-router-dom'
 
 /** Shown for unknown URLs (and as the router's error boundary). */
 export function NotFoundPage() {
+  // As the "*" route there is no route error (useRouteError returns null); as the error boundary there is one.
   const error = useRouteError()
-  const unexpected = error !== undefined && !(isRouteErrorResponse(error) && error.status === 404)
+  const unexpected = error != null && !(isRouteErrorResponse(error) && error.status === 404)
   return (
     <div className="mx-auto max-w-md py-16 text-center">
       <p className="font-mono text-emerald-400">{unexpected ? 'error' : '404'}</p>

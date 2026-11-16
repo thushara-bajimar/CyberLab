@@ -37,8 +37,10 @@ export function Terminal({ challengeId, environment }: { challengeId: string; en
   const inputRef = useRef<HTMLInputElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
 
+  // Keep the newest output visible (scrollTop works in every browser and in test DOMs).
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight })
+    const element = scrollRef.current
+    if (element) element.scrollTop = element.scrollHeight
   }, [lines])
 
   const prompt = (path: string) => `${environment.user}@${environment.hostname}:${displayPath(path, environment.home)}$`

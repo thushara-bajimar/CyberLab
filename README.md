@@ -5,10 +5,11 @@
 CyberLab is a beginner-friendly platform for practising cybersecurity through guided challenges, a **simulated**
 browser terminal, progressive hints, server-side scoring and progress tracking.
 
-> **Project status: Phases 1–6 complete** (foundation, dashboard, modules and challenges, simulated terminal,
-> hints and scoring, progress tracking with reset). Every challenge can be completed end to end, and progress is
-> stored in SQLite and survives restarts. Still planned: API hardening, a security test pass and UI polish
-> (Phases 7–9). See [docs/PLAN.md](docs/PLAN.md) for the full design.
+> **Project status: Phases 1–8 complete** (foundation, dashboard, modules and challenges, simulated terminal,
+> hints and scoring, progress tracking with reset, API hardening and testing). Every challenge can be completed
+> end to end, progress survives restarts, and the API is hardened against CSRF, DNS rebinding and malformed
+> input. Still planned: UI polish (Phase 9) and final documentation (Phase 10). See
+> [docs/PLAN.md](docs/PLAN.md) for the full design.
 
 ## What works today
 
@@ -23,7 +24,7 @@ browser terminal, progressive hints, server-side scoring and progress tracking.
 | API | `GET /api/health`, `/api/dashboard`, `/api/modules`, `/api/modules/:moduleId`, `/api/challenges`, `/api/challenges/:challengeId`, `/api/progress`, `/api/activity?limit=&offset=`; `POST /api/challenges/:challengeId/hints`, `/api/challenges/:challengeId/submit`, `/api/terminal/execute`, `/api/progress/reset` |
 | Security of content | Answer rules, unrevealed hints and explanations of unfinished challenges are never sent to the browser (covered by tests) |
 | SQLite database | Schema v1 with foreign keys, CHECK constraints, indexes, WAL; guest learner profile; content re-seeded on start without touching progress |
-| Tests | 128 backend tests: health, errors, schema, persistence, config, scoring, dashboard, content validation, seeding, content API, terminal engine, terminal security, terminal API, answer checking, hints and submissions, progress, activity paging, reset, HTTP security (headers, CSRF, DNS rebinding, methods, injection, errors) |
+| Tests | 128 backend tests, 27 frontend component tests and 21 end-to-end browser tests (see [Testing](#testing)) |
 
 ## Course content
 
@@ -185,8 +186,23 @@ committed to Git.
 | backend | `npm run typecheck` | Type-check source and tests |
 | backend | `npm run build` / `npm start` | Compile to `dist/` and run the compiled server |
 | frontend | `npm run dev` | Start the Vite dev server |
-| frontend | `npm run build` | Type-check and build to `dist/` |
+| frontend | `npm run build` | Type-check (app and tests) and build to `dist/` |
 | frontend | `npm run lint` | Lint with oxlint |
+| frontend | `npm test` | Component tests (Vitest + Testing Library, jsdom) |
+| frontend | `npm run test:e2e` | End-to-end tests in a real browser (Playwright) |
+
+## Testing
+
+| Suite | Command | Count | What it covers |
+|---|---|---|---|
+| Backend | `cd backend; npm test` | 128 | API endpoints, validation, scoring, hints, progress, reset, seeding, content solvability, terminal engine, terminal and HTTP security |
+| Frontend components | `cd frontend; npm test` | 27 | Terminal (requests sent, prompt, history keys, clear, errors, output rendered as text), hint confirmation, answer feedback, reset confirmation, API client, source scan for unsafe DOM APIs |
+| End-to-end | `cd frontend; npm run test:e2e` | 21 (+5 skipped) | Full learner journey on desktop; every page on desktop and phone width without horizontal scrolling or console errors; 404 pages |
+
+The end-to-end suite starts its **own** backend and frontend on ports 4100 and 5174 with an in-memory
+database, so it never touches your data or a running `npm run dev`. It uses the installed Microsoft Edge;
+set `PLAYWRIGHT_CHANNEL=chrome` to use Chrome instead. (The 5 skipped tests are the journey on the phone
+viewport: the journey runs once on desktop, while every page is checked on both viewports.)
 
 ## Repository layout
 
@@ -202,9 +218,12 @@ CyberLab/
 │   ├── src/controllers/       request validation and responses
 │   ├── src/routes/            URL -> controller wiring
 │   └── tests/                 Vitest + supertest
-└── frontend/src/
-    ├── api/                   typed fetch client and response types
-    ├── components/            layout, UI building blocks, content cards, challenge panels
-    ├── hooks/useApi.ts        loading / success / error state for API calls
-    └── pages/                 Dashboard, Modules, Module detail, Challenges, Challenge, 404
+└── frontend/
+    ├── e2e/                   Playwright end-to-end tests (playwright.config.ts starts the servers)
+    └── src/
+        ├── api/               typed fetch client and response types
+        ├── components/        layout, UI building blocks, content cards, challenge panels (+ *.test.tsx)
+        ├── hooks/useApi.ts    loading / success / error state for API calls
+        ├── pages/             Dashboard, Modules, Module detail, Challenges, Challenge, Progress, 404
+        └── test/              test setup, helpers and the source security scan
 ```
