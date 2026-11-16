@@ -9,8 +9,7 @@ points and activity are stored in SQLite and shown on a dashboard.
 
 > **Status:** MVP complete (development Phases 1–10). 7 modules, 14 challenges, 128 backend tests, 33
 > frontend component tests and 64 end-to-end browser tests passing. The design and phase plan are in
-> [docs/PLAN.md](docs/PLAN.md). The complete technical documentation (89 pages, generated from the code) is
-> [docs/CyberLab_Complete_Technical_Documentation.pdf](docs/CyberLab_Complete_Technical_Documentation.pdf).
+> [docs/PLAN.md](docs/PLAN.md).
 
 ---
 
