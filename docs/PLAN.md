@@ -278,6 +278,20 @@ CyberLab/
 | 10 | README + Git cleanup | README matches code |
 | — | Documentation PDF, audit, presentation guide | after implementation is audited |
 
+### Phase history (what was actually delivered)
+
+| Phase | Commit | Delivered | Changes from the plan |
+|---|---|---|---|
+| 1 | `f11249e` | Foundation, schema v1, health endpoint, dev proxy | — |
+| 2 | `c85eda2` | Layout, navigation, dashboard API and page | — |
+| 3 | `708afc6` | Course content, seeding, modules/challenges APIs and pages | 7 modules / 14 challenges instead of the inconsistent "6 / 12" |
+| 4 | `8156b01` | Simulated terminal engine, endpoint and UI | `base64` added; linear-time wildcard matcher instead of regex (ReDoS) |
+| 5 | `7bafc68` | Hints, answer checking, scoring | — |
+| 6 | `9751841` | Progress page, activity history, reset | Reset added at the user's request |
+| 7–8 | `2ffe68c`, `12811b3` | API hardening (headers, CSRF, DNS rebinding, 405), frontend component and e2e tests | Phases 7 and 8 combined; 404-page bug found and fixed |
+| 9 | `2df6036` | Accessibility (axe-core), contrast fixes, page titles, focus management, offline messages | — |
+| 10 | this commit | Final README, plan update, repository check | — |
+
 ## 17. Testing strategy
 
 - **Backend unit tests:** parser, path resolution, every command, scoring formula, answer normalisation.
